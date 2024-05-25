@@ -37,6 +37,8 @@ namespace tridot2d {
 		random = Singleton::get<Random>();
 		camera = Singleton::get<Camera>();
 		time = Singleton::get<Time>();
+		audioSystem = Singleton::get<AudioSystem>();
+		audioManager = Singleton::get<AudioManager>();
 		
 		window->enableGUI = false;
 		window->alwaysRefresh = true;
@@ -46,8 +48,10 @@ namespace tridot2d {
 		input->init();
 		random->init();
 		textureManager->directory = searchPath("assets/textures") + "/";
+		audioManager->directory = searchPath("assets/audio") + "/";
 		renderer->init(false);
 		time->init();
+		audioSystem->init();
 
 		init();
 	}

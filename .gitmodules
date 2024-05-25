@@ -10,3 +10,6 @@
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "libs/openal"]
+	path = libs/openal
+	url = https://github.com/kcat/openal-soft

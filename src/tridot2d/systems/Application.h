@@ -10,6 +10,7 @@
 #include "systems/Random.h"
 #include "render/Renderer2D.h"
 #include "systems/Time.h"
+#include "audio/AudioSystem.h"
 #include "Camera.h"
 
 namespace tridot2d {
@@ -24,6 +25,8 @@ namespace tridot2d {
 		Random* random = nullptr;
 		Camera* camera = nullptr;
 		Time* time = nullptr;
+		AudioSystem* audioSystem = nullptr;
+		AudioManager* audioManager = nullptr;
 
 		void startup();
 		void run();
