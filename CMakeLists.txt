@@ -5,7 +5,6 @@ set(SOLUTION_NAME "Tridot2D")
 #general settings
 if(WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-    set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
     set(CMAKE_DEBUG_POSTFIX "")
     set(CMAKE_RELWITHDEBINFO_POSTFIX "")
     set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
@@ -15,7 +14,6 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     add_link_options(-no-pie)
 endif()
-#set(CMAKE_UNITY_BUILD ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_FOLDER Libs)
 
@@ -62,5 +60,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${SOLUTION_NAME})
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 
 
-set_target_properties(glfw uninstall PROPERTIES FOLDER Libs)
+set_target_properties(glfw uninstall update_mappings PROPERTIES FOLDER Libs)
 project(${SOLUTION_NAME})

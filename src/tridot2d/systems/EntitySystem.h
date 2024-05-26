@@ -38,8 +38,11 @@ namespace tridot2d {
 			: position(position), scale(scale), rotation(rotation) {}
 
 		template<typename T>
-		void addComponent(const T& t = T()) {
-			components.push_back(std::make_shared<T>(t));
+		T *addComponent(const T& t = T()) {
+			auto comp = std::make_shared<T>(t);
+			components.push_back(comp);
+			((Component*)comp.get())->init(*this);
+			return comp.get();
 		}
 
 		template<typename T>
@@ -54,7 +57,6 @@ namespace tridot2d {
 		}
 
 		void updateComponents(float deltaTime);
-		void initComponents();
 
 		virtual void update(float deltaTime) {};
 		virtual void init() {};
@@ -71,7 +73,6 @@ namespace tridot2d {
 			Entity* ent = new T(t);
 			entities.push_back(ent);
 			ent->init();
-			ent->initComponents();
 			return ent;
 		}
 

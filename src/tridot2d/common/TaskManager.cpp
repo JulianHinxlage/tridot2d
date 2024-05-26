@@ -32,6 +32,7 @@ namespace tridot2d {
 			tasks[id] = task;
 		}
 		scheduleTask(id);
+		removeFinishedTasks();
 		return id;
 	}
 
@@ -313,6 +314,18 @@ namespace tridot2d {
 			else {
 				task.state = TaskState::SCHEDULED;
 				wakeupWorker.notify_one();
+			}
+		}
+	}
+
+	void TaskManager::removeFinishedTasks() {
+		LOCK(taskDataMutex);
+		for (auto it = tasks.begin(); it != tasks.end();) {
+			if (it->second.state == TaskState::FINIESHED || it->second.state == TaskState::TERMINATED) {
+				tasks.erase(it++);
+			}
+			else {
+				it++;
 			}
 		}
 	}

@@ -11,6 +11,7 @@
 #include "render/Renderer2D.h"
 #include "systems/Time.h"
 #include "audio/AudioSystem.h"
+#include "physics/PhysicsSystem.h"
 #include "Camera.h"
 
 namespace tridot2d {
@@ -27,6 +28,7 @@ namespace tridot2d {
 		Time* time = nullptr;
 		AudioSystem* audioSystem = nullptr;
 		AudioManager* audioManager = nullptr;
+		PhysicsSystem* physics = nullptr;
 
 		void startup();
 		void run();

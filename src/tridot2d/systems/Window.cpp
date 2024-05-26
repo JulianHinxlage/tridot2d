@@ -4,6 +4,7 @@
 
 #include "Window.h"
 #include "util/strutil.h"
+#include "common/Log.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -54,6 +55,11 @@ namespace tridot2d {
 		}
 		glfwMakeContextCurrent((GLFWwindow*)context);
 		glfwSwapInterval(swapInterval);
+
+		Log::info("OpenGL version: %s", glGetString(GL_VERSION));
+		Log::info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		Log::info("GPU vendor: %s", glGetString(GL_VENDOR));
+		Log::info("GPU: %s", glGetString(GL_RENDERER));
 
 		//init glew
 		if (glewInit() != GLEW_OK) {

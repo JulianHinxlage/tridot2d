@@ -31,14 +31,6 @@ namespace tridot2d {
 		}
 	}
 
-	void Entity::initComponents() {
-		for (auto& comp : components) {
-			if (comp) {
-				comp->init(*this);
-			}
-		}
-	}
-
 	void EntitySystem::update(float deltaTime) {
 		for (auto& entity : entities) {
 			entity->updateComponents(deltaTime);

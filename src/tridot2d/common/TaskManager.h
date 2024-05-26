@@ -115,6 +115,7 @@ namespace tridot2d {
 		void runWorker();
 		void runTimer();
 		void scheduleTask(int taskId);
+		void removeFinishedTasks();
 	};
 
 }
