@@ -14,6 +14,7 @@
 #include "physics/PhysicsSystem.h"
 #include "Camera.h"
 #include "particles/ParticleSystem.h"
+#include "components/commonComponents.h"
 
 namespace tridot2d {
 

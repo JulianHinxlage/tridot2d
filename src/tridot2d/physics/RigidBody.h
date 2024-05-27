@@ -38,12 +38,13 @@ namespace tridot2d {
 			body->position = ent.position;
 			body->rotation = ent.rotation;
 			body->scale = ent.scale;
-			body->userPtr = &ent;
+			body->entity = &ent;
 		}
 
 		void update(Entity& ent, float dt) override {
 			ent.position = body->position;
 			ent.rotation = body->rotation;
+			body->scale = ent.scale;
 		}
 	};
 

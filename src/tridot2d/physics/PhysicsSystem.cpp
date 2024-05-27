@@ -24,8 +24,10 @@ namespace tridot2d {
 		solver->deltaTime = deltaTime;
 
 		for (auto& body : bodies) {
-			broadPhase->updateBody(body.get());
-			solver->preUpdate(body.get());
+			if (body) {
+				broadPhase->updateBody(body.get());
+				solver->preUpdate(body.get());
+			}
 		}
 
 		broadPhase->each([&](Body* a, Body* b) {
@@ -44,7 +46,9 @@ namespace tridot2d {
 		});
 
 		for (auto& body : bodies) {
-			solver->postUpdate(body.get());
+			if (body) {
+				solver->postUpdate(body.get());
+			}
 		}
 	}
 

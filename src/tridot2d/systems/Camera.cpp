@@ -57,4 +57,13 @@ namespace tridot2d {
 		}
 	}
 
+	glm::vec2 Camera::getMousePosition() {
+		Input& input = *Singleton::get<Input>();
+		glm::vec2 mouse = input.getMousePosition(true);
+		mouse.x *= aspectRatio;
+		mouse *= scale;
+		mouse += position;
+		return mouse;
+	}
+
 }

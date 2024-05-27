@@ -6,6 +6,7 @@
 
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include <string>
 
 namespace tridot2d {
 
@@ -156,6 +157,18 @@ namespace tridot2d {
             bool down = false;
         };
 
+        class Action {
+        public:
+            std::string name;
+            class Entry {
+            public:
+                bool isButton = false;
+                Key key;
+                Button button;
+            };
+            std::vector<Entry> entries;
+        };
+
         bool allowInputs;
 
         Input();
@@ -165,22 +178,22 @@ namespace tridot2d {
 
         State get(Key key);
         State get(char key);
-        State get(const char *key);
+        State get(const std::string& action);
         State get(Button button);
 
         bool down(Key key);
         bool down(char key);
-        bool down(const char *key);
+        bool down(const std::string& action);
         bool down(Button button);
 
         bool pressed(Key key);
         bool pressed(char key);
-        bool pressed(const char *key);
+        bool pressed(const std::string& action);
         bool pressed(Button button);
 
         bool released(Key key);
         bool released(char key);
-        bool released(const char *key);
+        bool released(const std::string& action);
         bool released(Button button);
 
         glm::vec2 getMousePosition(bool screenSpace = false);
@@ -191,7 +204,13 @@ namespace tridot2d {
         bool downShift();
         bool downAlt();
 
+        void bindAction(const std::string& name, Key key, bool reset = true);
+        void bindAction(const std::string &name, char key, bool reset = true);
+        void bindAction(const std::string &name, Button button, bool reset = true);
+        Action *getAction(const std::string& name);
+
     private:
+        std::unordered_map<std::string, Action> actions;
         std::unordered_map<Key, State> keys;
         std::unordered_map<Button, State> buttons;
         float wheel;

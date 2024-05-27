@@ -8,6 +8,7 @@
 #include "AL/al.h"
 #include "AL/alc.h"
 #include <fstream>
+#include <bit>
 
 namespace tridot2d {
 

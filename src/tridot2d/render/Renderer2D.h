@@ -15,8 +15,8 @@ namespace tridot2d {
 		std::shared_ptr<FrameBuffer> frameBuffer;
 
 		void init(bool useFrameBuffer, int resolutionX = 0, int resolutionY = 0);
-		void submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation = 0, Texture* texture = nullptr, Color color = color::white);
-		void submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation = 0, Texture* texture = nullptr, Color color = color::white);
+		void submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2 &coords1 = {0, 0}, const glm::vec2 &coords2 = {1, 1});
+		void submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2& coords1 = { 0, 0 }, const glm::vec2& coords2 = { 1, 1 });
 		void begin(const glm::mat4& cameraMatrix = glm::mat4(1), bool clear = true);
 		void end();
 
@@ -30,6 +30,8 @@ namespace tridot2d {
 		public:
 			glm::mat4 transform;
 			glm::vec4 color;
+			glm::vec2 coords1;
+			glm::vec2 coords2;
 		};
 
 		class Batch {

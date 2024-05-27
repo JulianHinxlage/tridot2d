@@ -16,15 +16,6 @@ namespace tridot2d {
 			}
 			path = "../" + path;
 		}
-		if (std::filesystem::is_directory(orig)) {
-			std::filesystem::create_directories(orig);
-		}
-		else {
-			std::string parent = std::filesystem::path(orig).parent_path().string();
-			if (!parent.empty()) {
-				std::filesystem::create_directories(std::filesystem::path(orig).parent_path());
-			}
-		}
 		return orig;
 	}
 

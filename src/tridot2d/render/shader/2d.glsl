@@ -8,6 +8,8 @@ layout (location=2) in vec2 vTexCoords;
 
 layout (location=3) in mat4 iTransform;
 layout (location=7) in vec4 iColor;
+layout (location=8) in vec2 iCoords1;
+layout (location=9) in vec2 iCoords2;
 
 uniform mat4 uProjection = mat4(1);
 
@@ -18,7 +20,7 @@ out vec4 fColor;
 
 void main(){
 	gl_Position = uProjection * iTransform * vec4(vPosition, 1.0);
-	fTexCoords = vTexCoords;
+	fTexCoords = iCoords1 + (iCoords2 - iCoords1) * vTexCoords;
 	fPosition = vPosition * 2;
 	fNormal = normalize(vec3(transpose(inverse(iTransform)) * vec4(vNormal, 0.0)));
 	fColor = iColor;

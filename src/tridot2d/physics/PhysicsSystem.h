@@ -8,6 +8,7 @@
 #include "BroadPhase.h"
 #include "Solver.h"
 #include <vector>
+#include <memory>
 
 namespace tridot2d {
 

@@ -34,7 +34,6 @@ namespace tridot2d {
 		};
 		defaultMesh->create(vertecies, sizeof(vertecies) / 4, indices, sizeof(indices) / 4);
 
-
 		instanceBuffer = std::make_shared<Buffer>();
 		instanceBuffer->init(nullptr, 0, 1, BufferType::VERTEX_BUFFER, true);
 		defaultMesh->vertexArray.addVertexBuffer(instanceBuffer, {
@@ -43,6 +42,8 @@ namespace tridot2d {
 			{Type::FLOAT, 4},
 			{Type::FLOAT, 4},
 			{Type::FLOAT, 4},
+			{Type::FLOAT, 2},
+			{Type::FLOAT, 2},
 		}, 1);
 
 		if (useFrameBuffer) {
@@ -58,7 +59,7 @@ namespace tridot2d {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	void Renderer2D::submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color) {
+	void Renderer2D::submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
 		glm::mat4 transform(1);
 		transform = glm::translate(transform, glm::vec3(pos, 0));
 		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
@@ -67,13 +68,15 @@ namespace tridot2d {
 		Instance instance;
 		instance.transform = transform;
 		instance.color = color.vec();
+		instance.coords1 = coords1;
+		instance.coords2 = coords2;
 		if (!texture) {
 			texture = defaultTexture.get();
 		}
 		quadBatches[texture].instances.push_back(instance);
 	}
 
-	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color) {
+	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
 		glm::mat4 transform(1);
 		transform = glm::translate(transform, glm::vec3(pos, 0));
 		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
@@ -82,6 +85,8 @@ namespace tridot2d {
 		Instance instance;
 		instance.transform = transform;
 		instance.color = color.vec();
+		instance.coords1 = coords1;
+		instance.coords2 = coords2;
 		if (!texture) {
 			texture = defaultTexture.get();
 		}

@@ -34,7 +34,7 @@ namespace tridot2d {
 		//create window
 		const char* glsl_version = "#version 130";
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		if (maximized) {
 			glfwWindowHint(GLFW_MAXIMIZED, 1);
 		}
@@ -118,6 +118,8 @@ namespace tridot2d {
 
 			initMenu();
 		}
+
+		clearColor = { 1, 1, 1 };
 	}
 
 	void Window::beginFrame() {
@@ -138,7 +140,7 @@ namespace tridot2d {
 		int y = 0;
 		glfwGetFramebufferSize((GLFWwindow*)context, &x, &y);
 		glViewport(0, 0, x, y);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 

@@ -25,8 +25,9 @@ namespace tridot2d {
 		float followSpeed = -1;
 		glm::vec2 followDeadZone = { 0, 0 };
 
-		virtual glm::mat4 getMatrix();
-		virtual void update(float deltaTime);
+		glm::mat4 getMatrix();
+		void update(float deltaTime);
+		glm::vec2 getMousePosition();
 
 	private:
 		glm::vec2 mousePos;

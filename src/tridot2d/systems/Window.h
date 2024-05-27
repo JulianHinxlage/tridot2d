@@ -16,6 +16,7 @@ namespace tridot2d {
 	public:
 		bool alwaysRefresh = false;
 		bool enableGUI = false;
+		glm::vec3 clearColor;
 
 		bool init(int width, int height, const std::string &title, int swapInterval = 1, bool maximized = false, bool fullscreen = false);
 		void beginFrame();

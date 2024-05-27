@@ -42,8 +42,10 @@ namespace tridot2d {
     void EulerSolver::preUpdate(Body* body) {
         body->force -= body->velocity * body->drag;
         body->force += body->gravity;
-        if (body->type == BodyType::DYNAMIC) {
-            body->velocity += body->force * deltaTime;
+        if (body->type == BodyType::DYNAMIC || body->type == BodyType::COLLIDER) {
+            if (body->type == BodyType::DYNAMIC) {
+                body->velocity += body->force * deltaTime;
+            }
             body->position += body->velocity * deltaTime;
             body->rotation = body->angular * deltaTime;
         }

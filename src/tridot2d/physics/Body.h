@@ -46,7 +46,7 @@ namespace tridot2d {
 
 		float mass = 1;
 		int index = 0;
-		void *userPtr = nullptr;
+		class Entity *entity = nullptr;
 		class Shape* shape = nullptr;
 
 		std::function<void(Body *, Manifold::Point)> onCollide = nullptr;

@@ -95,8 +95,27 @@ namespace tridot2d {
         return keys[(Key)key];
     }
 
-    Input::State Input::get(const char *key) {
-        return keys[(Key)*key];
+    Input::State Input::get(const std::string& action) {
+        State state;
+        auto i = actions.find(action);
+        if (i != actions.end()) {
+            Action& a = i->second;
+            for (auto& e : a.entries) {
+                if (e.isButton) {
+                    State s = get(e.button);
+                    state.down |= s.down;
+                    state.pressed |= s.pressed;
+                    state.released |= s.released;
+                }
+                else {
+                    State s = get(e.key);
+                    state.down |= s.down;
+                    state.pressed |= s.pressed;
+                    state.released |= s.released;
+                }
+            }
+        }
+        return state;
     }
 
     Input::State Input::get(Input::Button button) {
@@ -111,8 +130,8 @@ namespace tridot2d {
         return get(key).down;
     }
 
-    bool Input::down(const char *key) {
-        return get(key).down;
+    bool Input::down(const std::string& action) {
+        return get(action).down;
     }
 
     bool Input::down(Input::Button button) {
@@ -127,8 +146,8 @@ namespace tridot2d {
         return get(key).pressed;
     }
 
-    bool Input::pressed(const char *key) {
-        return get(key).pressed;
+    bool Input::pressed(const std::string& action) {
+        return get(action).pressed;
     }
 
     bool Input::pressed(Input::Button button) {
@@ -143,8 +162,8 @@ namespace tridot2d {
         return get(key).released;
     }
 
-    bool Input::released(const char *key) {
-        return get(key).released;
+    bool Input::released(const std::string& action) {
+        return get(action).released;
     }
 
     bool Input::released(Input::Button button) {
@@ -195,6 +214,40 @@ namespace tridot2d {
 
     bool Input::downAlt() {
         return down(Key::KEY_LEFT_ALT) || down(Key::KEY_RIGHT_ALT);
+    }
+
+    void Input::bindAction(const std::string& name, Key key, bool reset) {
+        actions[name].name = name;
+        if (reset) {
+            actions[name].entries.clear();
+        }
+        Action::Entry e;
+        e.isButton = false;
+        e.key = key;
+        actions[name].entries.push_back(e);
+    }
+
+    void Input::bindAction(const std::string& name, char key, bool reset) {
+        bindAction(name, (Key)key, reset);
+    }
+
+    void Input::bindAction(const std::string& name, Button button, bool reset) {
+        actions[name].name = name;
+        if (reset) {
+            actions[name].entries.clear();
+        }
+        Action::Entry e;
+        e.isButton = true;
+        e.button = button;
+        actions[name].entries.push_back(e);
+    }
+
+    Input::Action* Input::getAction(const std::string& name) {
+        auto i = actions.find(name);
+        if (i != actions.end()) {
+            return &i->second;
+        }
+        return nullptr;
     }
 
 }
