@@ -37,6 +37,7 @@ namespace tridot2d {
 			}
 			body->position = ent.position;
 			body->rotation = ent.rotation;
+			body->scale = ent.scale;
 			body->userPtr = &ent;
 		}
 

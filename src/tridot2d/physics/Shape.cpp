@@ -7,10 +7,15 @@
 namespace tridot2d {
 
 	bool checkBoxBox(BoxShape* boxA, Body *bodyA, BoxShape* boxB, Body *bodyB, Manifold* manifold) {
-		float right = bodyA->position.x + boxA->halfSize.x - (bodyB->position.x - boxB->halfSize.x);
-		float left = bodyB->position.x + boxB->halfSize.x - (bodyA->position.x - boxA->halfSize.x);
-		float top = bodyA->position.y + boxA->halfSize.y - (bodyB->position.y - boxB->halfSize.y);
-		float bottom = bodyB->position.y + boxB->halfSize.y - (bodyA->position.y - boxA->halfSize.y);
+		glm::vec2 posA = bodyA->position + boxA->offset;
+		glm::vec2 posB = bodyB->position + boxB->offset;
+		glm::vec2 sizeA = boxA->halfSize * bodyA->scale;
+		glm::vec2 sizeB = boxB->halfSize * bodyB->scale;
+
+		float right = posA.x + sizeA.x - (posB.x - sizeB.x);
+		float left = posB.x + sizeB.x - (posA.x - sizeA.x);
+		float top = posA.y + sizeA.y - (posB.y - sizeB.y);
+		float bottom = posB.y + sizeB.y - (posA.y - sizeA.y);
 
 		if (right > 0 && left > 0 && top > 0 && bottom > 0) {
 			float penetration = glm::min(right, glm::min(left, glm::min(top, bottom)));
@@ -20,23 +25,23 @@ namespace tridot2d {
 
 			if (penetration == right) {
 				normal = { -1, 0 };
-				distA = boxA->halfSize.x;
-				distB = boxB->halfSize.x;
+				distA = sizeA.x;
+				distB = sizeB.x;
 			}
 			else if (penetration == left) {
 				normal = { 1, 0 };
-				distA = boxA->halfSize.x;
-				distB = boxB->halfSize.x;
+				distA = sizeA.x;
+				distB = sizeB.x;
 			}
 			else if (penetration == top) {
 				normal = { 0, -1 };
-				distA = boxA->halfSize.y;
-				distB = boxB->halfSize.y;
+				distA = sizeA.y;
+				distB = sizeB.y;
 			}
 			else if (penetration == bottom) {
 				normal = { 0, 1 };
-				distA = boxA->halfSize.y;
-				distB = boxB->halfSize.y;
+				distA = sizeA.y;
+				distB = sizeB.y;
 			}
 
 

@@ -19,6 +19,7 @@ namespace tridot2d {
 	class Shape {
 	public:
 		ShapeType type;
+		glm::vec2 offset = { 0, 0 };
 		virtual bool check(Body *body, Body *otherBody, Shape* otherShape, Manifold* result) { return false; };
 	};
 

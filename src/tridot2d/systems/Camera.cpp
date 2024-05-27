@@ -51,12 +51,8 @@ namespace tridot2d {
 				if (factor > 1) {
 					factor = 1;
 				}
-
-				if (followEntity->position.x - position.x > followDeadZone.x || followEntity->position.x - position.x < -followDeadZone.x) {
-					if (followEntity->position.y - position.y > followDeadZone.y || followEntity->position.y - position.y < -followDeadZone.y) {
-						position += (followEntity->position - position) * factor;
-					}
-				}
+				
+				position += (followEntity->position - position) * factor;
 			}
 		}
 	}

@@ -13,6 +13,7 @@
 #include "audio/AudioSystem.h"
 #include "physics/PhysicsSystem.h"
 #include "Camera.h"
+#include "particles/ParticleSystem.h"
 
 namespace tridot2d {
 
@@ -28,7 +29,8 @@ namespace tridot2d {
 		Time* time = nullptr;
 		AudioSystem* audioSystem = nullptr;
 		AudioManager* audioManager = nullptr;
-		PhysicsSystem* physics = nullptr;
+		PhysicsSystem* physicsSystem = nullptr;
+		ParticleSystem* particleSystem = nullptr;
 
 		void startup();
 		void run();

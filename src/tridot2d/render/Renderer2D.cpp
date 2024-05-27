@@ -61,8 +61,8 @@ namespace tridot2d {
 	void Renderer2D::submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color) {
 		glm::mat4 transform(1);
 		transform = glm::translate(transform, glm::vec3(pos, 0));
-		transform = glm::scale(transform, glm::vec3(scale, 0));
 		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
+		transform = glm::scale(transform, glm::vec3(scale, 0));
 
 		Instance instance;
 		instance.transform = transform;
@@ -73,9 +73,10 @@ namespace tridot2d {
 		quadBatches[texture].instances.push_back(instance);
 	}
 
-	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, Texture* texture, Color color) {
+	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation, Texture* texture, Color color) {
 		glm::mat4 transform(1);
 		transform = glm::translate(transform, glm::vec3(pos, 0));
+		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
 		transform = glm::scale(transform, glm::vec3(scale, 0));
 
 		Instance instance;

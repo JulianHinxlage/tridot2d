@@ -48,7 +48,7 @@ namespace tridot2d {
 		template<typename T>
 		T* getComponent() {
 			for (auto& comp : components) {
-				T* t = dynamic_cast<T*>(comp);
+				T* t = dynamic_cast<T*>(comp.get());
 				if (t) {
 					return t;
 				}

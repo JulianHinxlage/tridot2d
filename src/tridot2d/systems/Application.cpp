@@ -39,7 +39,8 @@ namespace tridot2d {
 		time = Singleton::get<Time>();
 		audioSystem = Singleton::get<AudioSystem>();
 		audioManager = Singleton::get<AudioManager>();
-		physics = Singleton::get<PhysicsSystem>();
+		physicsSystem = Singleton::get<PhysicsSystem>();
+		particleSystem = Singleton::get<ParticleSystem>();
 		
 		window->enableGUI = false;
 		window->alwaysRefresh = true;
@@ -53,7 +54,8 @@ namespace tridot2d {
 		renderer->init(false);
 		time->init();
 		audioSystem->init();
-		physics->init();
+		physicsSystem->init();
+		particleSystem->init();
 
 		init();
 	}
@@ -70,7 +72,8 @@ namespace tridot2d {
 
 			preUpdate();
 			entitySystem->update(time->deltaTime);
-			physics->update(time->deltaTime, 4);
+			physicsSystem->update(time->deltaTime, 4);
+			particleSystem->updaet(time->deltaTime);
 			update();
 
 			renderer->end();
