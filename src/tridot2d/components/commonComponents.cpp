@@ -65,4 +65,50 @@ namespace tridot2d {
 		sprite->coords2 = sprite->coords1 + (spriteSize / resoultion);
 	}
 
+	SpriteAnimation::SpriteAnimation(Sprite* sprite) {
+		this->sprite = sprite;
+		spriteSheet.texture = sprite->texture;
+	}
+
+	void SpriteAnimation::set(int animationId) {
+		if (animationId != currentAnimationId) {
+			currentAnimationId = animationId;
+			time = 0;
+		}
+	}
+
+	SpriteAnimation::Animation &SpriteAnimation::add(int animationId, std::vector<int> spriteIndices, float time, bool loop) {
+		Animation anim;
+		anim.animationId = animationId;
+		anim.spriteIndices = spriteIndices;
+		anim.time = time;
+		anim.loop = loop;
+		animations[animationId] = anim;
+		return animations[animationId];
+	}
+
+	void SpriteAnimation::update(Entity& ent, float detaTime) {
+		auto i = animations.find(currentAnimationId);
+		if (i != animations.end()) {
+			Animation &anim = i->second;
+			if (anim.loop) {
+				if (time > anim.time) {
+					time -= anim.time;
+				}
+			}
+			int index = (time / anim.time) * anim.spriteIndices.size();
+			if (index >= 0 && index < anim.spriteIndices.size()) {
+				int spriteIndex = anim.spriteIndices[index];
+				if (spriteIndex >= 0) {
+					spriteSheet.set(sprite, spriteIndex);
+				}
+				else {
+					spriteSheet.set(sprite, -spriteIndex);
+					std::swap(sprite->coords1.x, sprite->coords2.x);
+				}
+			}
+		}
+		time += detaTime;
+	}
+
 }

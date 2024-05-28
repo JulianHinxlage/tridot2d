@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "EntitySystem.h"
 #include <glm/glm.hpp>
 
 namespace tridot2d {
@@ -21,7 +22,7 @@ namespace tridot2d {
 
 		//follow
 		bool followEnabled = false;
-		class Entity* followEntity = nullptr;
+		EntityRef followEntity = nullptr;
 		float followSpeed = -1;
 		glm::vec2 followDeadZone = { 0, 0 };
 

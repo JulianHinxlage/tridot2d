@@ -5,6 +5,7 @@
 #pragma once
 
 #include "systems/EntitySystem.h"
+#include <map>
 
 namespace tridot2d {
 
@@ -47,16 +48,48 @@ namespace tridot2d {
 		void update(Entity& ent, float deltaTime) override;
 	};
 
-	class SpriteSheet : public Component {
+	class SpriteSheet {
 	public:
 		std::shared_ptr<Texture> texture = nullptr;
-		glm::vec2 resoultion = { 0, 0 };
-		glm::vec2 spritePadding = { 0, 0 };
-		glm::vec2 spriteSize = { 0, 0 };
+		glm::vec2 resoultion = { 1, 1 };
+		glm::vec2 spritePadding = { 1, 1 };
+		glm::vec2 spriteSize = { 1, 1 };
 		glm::vec2 spriteOffset = { 0, 0 };
 
+		SpriteSheet() {};
 		SpriteSheet(const std::string& texture);
 		void set(Sprite *sprite, int index);
+
+		void setup(int xCount, int yCount, glm::vec2 margin = {0, 0}) {
+			spritePadding = resoultion / glm::vec2(xCount, yCount);
+			spriteSize = spritePadding;
+			spriteOffset = spriteSize * margin;
+			spriteSize -= spriteOffset * 2.0f;
+		}
+	};
+
+	class SpriteAnimation : public Component {
+	public:
+		Sprite* sprite = nullptr;
+		SpriteSheet spriteSheet;
+
+		class Animation {
+		public:
+			int animationId = -1;
+			float time = 1;
+			bool loop = true;
+			std::vector<int> spriteIndices;
+		};
+		std::map<int, Animation> animations;
+		int currentAnimationId = -1;
+		float time = 0;
+
+		SpriteAnimation(Sprite* sprite);
+
+		Animation& add(int animationId, std::vector<int> spriteIndices = {}, float time = 1, bool loop = false);
+		void set(int animationId);
+
+		void update(Entity& ent, float detaTime) override;
 	};
 
 }

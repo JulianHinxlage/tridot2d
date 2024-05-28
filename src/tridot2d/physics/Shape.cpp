@@ -61,7 +61,7 @@ namespace tridot2d {
 	}
 
     bool BoxShape::check(Body* body, Body* otherBody, Shape* otherShape, Manifold* result) {
-		if (otherShape->type == ShapeType::BOX) {
+		if (otherShape && otherShape->type == ShapeType::BOX) {
 			return checkBoxBox(this, body, (BoxShape*)otherShape, otherBody, result);
 		}
         return false;

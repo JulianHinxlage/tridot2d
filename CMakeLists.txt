@@ -52,13 +52,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC libs libs/glm libs/glfw/includ
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${SOLUTION_NAME})
 
 
-project(test)
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/test/*.cpp src/test/*.h)
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_link_libraries(${PROJECT_NAME} tridot2d)
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${SOLUTION_NAME})
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-
-
 set_target_properties(glfw uninstall update_mappings PROPERTIES FOLDER Libs)
 project(${SOLUTION_NAME})

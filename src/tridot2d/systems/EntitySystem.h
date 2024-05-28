@@ -9,11 +9,14 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <map>
+#include <set>
 
 namespace tridot2d {
 
 	class Component {
 	public:
+		virtual ~Component() {}
 		virtual void update(class Entity& entity, float deltaTime) {};
 		virtual void init(class Entity& entity) {};
 	};
@@ -21,7 +24,7 @@ namespace tridot2d {
 	class Entity {
 	public:
 		std::vector<std::shared_ptr<Component>> components;
-		int entityIndex = 0;
+		bool active = true;
 
 		glm::vec2 position = { 0, 0 };
 		glm::vec2 scale = { 1, 1 };
@@ -29,6 +32,8 @@ namespace tridot2d {
 
 		Entity(const glm::vec2 position = { 0, 0 }, const glm::vec2& scale = { 1, 1 }, float rotation = 0)
 			: position(position), scale(scale), rotation(rotation) {}
+
+		virtual ~Entity() {}
 
 		template<typename T>
 		T *addComponent(const T& t = T()) {
@@ -53,12 +58,54 @@ namespace tridot2d {
 
 		virtual void update(float deltaTime) {};
 		virtual void init() {};
+
+	private:
+		int entityIndex = -1;
+		friend class EntitySystem;
+	};
+
+	class EntityRef {
+	public:
+		EntityRef();
+
+		EntityRef(Entity* ent);
+
+		EntityRef(const EntityRef& ref);
+
+		EntityRef(EntityRef&& ref);
+
+		~EntityRef();
+
+		void operator=(const EntityRef& ref);
+
+		void operator=(Entity* ent);
+
+		bool operator==(Entity* ent);
+
+		bool operator==(const EntityRef& ref);
+
+		operator bool();
+
+		operator Entity*();
+
+		Entity* operator->();
+
+		Entity& operator*();
+
+		Entity* get();
+
+		void set(Entity *ent);
+
+		static void invalidate(Entity* ent);
+
+	private:
+		Entity* entity = nullptr;
+		static std::map<Entity*, std::set<EntityRef*>> refs;
 	};
 
 	class EntitySystem {
 	public:
 		std::vector<Entity*> entities;
-
 		std::vector<Entity*> pendingRemoves;
 		std::vector<Entity*> pendingAdds;
 
@@ -78,7 +125,6 @@ namespace tridot2d {
 		}
 
 		void removeEntity(Entity* ent);
-
 		void clear();
 	};
 
