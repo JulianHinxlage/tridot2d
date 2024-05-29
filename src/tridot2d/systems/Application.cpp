@@ -32,6 +32,7 @@ namespace tridot2d {
 		audioManager = Singleton::get<AudioManager>();
 		physicsSystem = Singleton::get<PhysicsSystem>();
 		particleSystem = Singleton::get<ParticleSystem>();
+		textRenderer = Singleton::get<TextRenderer>();
 		
 		window->enableGUI = false;
 		window->alwaysRefresh = true;
@@ -47,6 +48,10 @@ namespace tridot2d {
 		audioSystem->init();
 		physicsSystem->init();
 		particleSystem->init();
+
+		textRenderer->renderer = renderer;
+		textRenderer->init();
+		textRenderer->setFont(searchPath("assets/font") + "/font.ttf", 160);
 
 		init();
 	}

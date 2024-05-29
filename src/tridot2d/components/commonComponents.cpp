@@ -29,7 +29,7 @@ namespace tridot2d {
 	}
 
 	void Sprite::update(Entity& entity, float deltaTime) {
-		Singleton::get<Renderer2D>()->submitQuad(entity.position, entity.scale, entity.rotation, depth, texture.get(), color, coords1, coords2);
+		Singleton::get<Renderer2D>()->submitQuad(entity.position + offset, entity.scale * scale, entity.rotation + rotation, depth, texture.get(), color, coords1, coords2);
 	};
 
 	void Velocity::update(Entity& ent, float dt) {

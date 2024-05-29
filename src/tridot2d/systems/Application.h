@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "particles/ParticleSystem.h"
 #include "components/commonComponents.h"
+#include "render/TextRenderer.h"
 
 namespace tridot2d {
 
@@ -32,6 +33,7 @@ namespace tridot2d {
 		AudioManager* audioManager = nullptr;
 		PhysicsSystem* physicsSystem = nullptr;
 		ParticleSystem* particleSystem = nullptr;
+		TextRenderer* textRenderer = nullptr;
 
 		void startup();
 		void run();
