@@ -44,5 +44,8 @@ void main(){
 		discard;
 	}
 	oColor = texture(uTexture, fTexCoords) * fColor;
+	if(oColor.a == 0){
+		discard;
+	}
 }
 )"

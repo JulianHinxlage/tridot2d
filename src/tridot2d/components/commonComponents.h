@@ -21,6 +21,7 @@ namespace tridot2d {
 	public:
 		std::shared_ptr<Texture> texture = nullptr;
 		Color color = color::white;
+		float depth = 0;
 		glm::vec2 coords1 = { 0, 0 };
 		glm::vec2 coords2 = { 1, 1 };
 

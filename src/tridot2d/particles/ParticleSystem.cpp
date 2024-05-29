@@ -38,10 +38,10 @@ namespace tridot2d {
 			color.a *= alpha;
 
 			if (p.type == ParticleType::QUAD) {
-				renderer.submitQuad(pos, size, rot, p.texture, Color(color));
+				renderer.submitQuad(pos, size, rot, particleDepth, p.texture, Color(color));
 			}
 			else {
-				renderer.submitCircle(pos, size, rot, p.texture, Color(color));
+				renderer.submitCircle(pos, size, rot, particleDepth, p.texture, Color(color));
 			}
 		}
 	}
