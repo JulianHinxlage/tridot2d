@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "EntitySystem.h"
+#include "core/EntitySystem.h"
 #include <glm/glm.hpp>
 
 namespace tridot2d {
@@ -13,6 +13,7 @@ namespace tridot2d {
 	public:
 		glm::vec2 position = { 0, 0 };
 		glm::vec2 scale = { 1, 1 };
+		glm::vec2 resolution = { 1, 1 };
 		float aspectRatio = 1;
 
 		//mouse
@@ -27,9 +28,10 @@ namespace tridot2d {
 		glm::vec2 followDeadZone = { 0, 0 };
 
 		glm::mat4 getMatrix();
+		glm::mat4 getScreenMatrix();
+
 		void update(float deltaTime);
 		glm::vec2 getMousePosition();
-
 	private:
 		glm::vec2 mousePos;
 	};

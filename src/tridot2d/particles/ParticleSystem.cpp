@@ -8,7 +8,7 @@
 
 namespace tridot2d {
 
-	void ParticleSystem::updaet(float deltaTime) {
+	void ParticleSystem::update(float deltaTime) {
 		time += deltaTime;
 		auto &renderer = *Singleton::get<Renderer2D>();
 		

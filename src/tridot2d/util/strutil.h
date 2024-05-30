@@ -21,6 +21,8 @@ namespace tridot2d {
 
 	std::string replace(const std::string& string, const std::string& search, const std::string& replacement);
 
+	std::string searchPath(std::string path);
+
 	int match(const std::string& string1, const std::string& string2);
 
 	void trimFront(std::string& string, const std::string& prefix, bool trimAllIfNotFound = false);

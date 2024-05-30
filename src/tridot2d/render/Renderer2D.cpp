@@ -159,7 +159,15 @@ namespace tridot2d {
 		lineBatch.vertices.push_back(v4);
 	}
 
-	void Renderer2D::begin(const glm::mat4& cameraMatrix, bool clear) {
+	void Renderer2D::begin(const glm::mat4& cameraMatrix, bool clear, bool enableDepth) {
+
+		if (enableDepth) {
+			RenderContext::setDepth(true);
+		}
+		else {
+			RenderContext::setDepth(false);
+		}
+
 		if (frameBuffer) {
 			frameBuffer->bind();
 			if (clear) {

@@ -14,7 +14,7 @@ namespace tridot2d {
 	public:
 		float particleDepth = 10;
 
-		void updaet(float deltaTime);
+		void update(float deltaTime);
 		void init();
 		Particle &addParticle();
 	private:

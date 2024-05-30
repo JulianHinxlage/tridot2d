@@ -5,7 +5,9 @@
 #pragma once
 
 #include "Body.h"
-#include "systems/EntitySystem.h"
+#include "PhysicsSystem.h"
+#include "core/EntitySystem.h"
+#include "common/Singleton.h"
 
 namespace tridot2d {
 
@@ -41,7 +43,7 @@ namespace tridot2d {
 			body->entity = &ent;
 		}
 
-		void update(Entity& ent, float dt) override {
+		void update(Entity& ent) override {
 			ent.position = body->position;
 			ent.rotation = body->rotation;
 			body->scale = ent.scale;

@@ -23,12 +23,4 @@ namespace tridot2d {
 		std::vector<std::shared_ptr<Audio>> loadingQueue;
 	};
 
-	class AudioManager {
-	public:
-		std::string directory;
-		std::unordered_map<std::string, std::shared_ptr<Audio>> audios;
-
-		std::shared_ptr<Audio> get(const std::string& filename);
-	};
-
 }

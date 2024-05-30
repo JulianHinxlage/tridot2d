@@ -91,7 +91,9 @@ namespace tridot2d {
 			for (int x = 0; x < w; x++) {
 				for (int y = 0; y < h; y++) {
 					unsigned char *pixel = &data[(x + y * w) * bytesPerPixel];
-					image.set(curserX + x, curserY + y, Color(0xffffff, *pixel));
+					if (*pixel == 255) {
+						image.set(curserX + x, curserY + y, Color(0xffffff));
+					}
 				}
 			}
 			stbtt_FreeBitmap(data, nullptr);
@@ -132,7 +134,7 @@ namespace tridot2d {
 		return size;
 	}
 
-	void TextRenderer::submit(const std::string& text, glm::vec2 position, glm::vec2 scale, float rotation, Color color) {
+	void TextRenderer::submit(const std::string& text, glm::vec2 position, glm::vec2 scale, float rotation, float depth, Color color) {
 		if (!atlas) {
 			return;
 		}
@@ -145,7 +147,7 @@ namespace tridot2d {
 				glm::vec2 p = position;
 				p += g.size * scale * 0.5f;
 				p += g.offset * scale;
-				renderer->submitQuad(p, scale * g.size, rotation, 0, atlas->texture.get(), color, g.corrds1, g.corrds2);
+				renderer->submitQuad(p, scale * g.size, rotation, depth, atlas->texture.get(), color, g.corrds1, g.corrds2);
 				position.x += g.stride * scale.x;
 			}
 		}

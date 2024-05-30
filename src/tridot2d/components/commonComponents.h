@@ -4,18 +4,11 @@
 
 #pragma once
 
-#include "systems/EntitySystem.h"
+#include "core/EntitySystem.h"
+#include "render/Texture.h"
 #include <map>
 
 namespace tridot2d {
-
-	class TextureManager {
-	public:
-		std::string directory;
-		std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
-
-		std::shared_ptr<Texture> get(const std::string& filename);
-	};
 
 	class Sprite : public Component {
 	public:
@@ -29,7 +22,7 @@ namespace tridot2d {
 		glm::vec2 coords2 = { 1, 1 };
 
 		Sprite(const std::string& texture, Color color = color::white);
-		void update(Entity& entity, float deltaTime) override;
+		void update(Entity& entity) override;
 	};
 
 	class Velocity : public Component {
@@ -40,7 +33,7 @@ namespace tridot2d {
 		Velocity(const glm::vec2 velocity = { 0, 0 }, float angular = 0)
 			: velocity(velocity), angular(angular) {}
 
-		void update(Entity& ent, float dt) override;
+		void update(Entity& ent) override;
 	};
 
 	class LifeTime : public Component {
@@ -49,7 +42,7 @@ namespace tridot2d {
 
 		LifeTime(float time = 1);
 
-		void update(Entity& ent, float deltaTime) override;
+		void update(Entity& ent) override;
 	};
 
 	class SpriteSheet {
@@ -93,7 +86,7 @@ namespace tridot2d {
 		Animation& add(int animationId, std::vector<int> spriteIndices = {}, float time = 1, bool loop = false);
 		void set(int animationId);
 
-		void update(Entity& ent, float detaTime) override;
+		void update(Entity& ent) override;
 	};
 
 }

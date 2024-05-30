@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include "render/Texture.h"
-#include "common/Singleton.h"
+#include <glm/glm.hpp>
 #include <string>
 #include <unordered_map>
 #include <memory>
@@ -17,7 +16,7 @@ namespace tridot2d {
 	class Component {
 	public:
 		virtual ~Component() {}
-		virtual void update(class Entity& entity, float deltaTime) {};
+		virtual void update(class Entity& entity) {};
 		virtual void init(class Entity& entity) {};
 	};
 
@@ -54,9 +53,9 @@ namespace tridot2d {
 			return nullptr;
 		}
 
-		void updateComponents(float deltaTime);
-
-		virtual void update(float deltaTime) {};
+		virtual void preUpdate() {};
+		virtual void update() {};
+		virtual void postUpdate() {};
 		virtual void init() {};
 
 	private:
@@ -67,35 +66,20 @@ namespace tridot2d {
 	class EntityRef {
 	public:
 		EntityRef();
-
 		EntityRef(Entity* ent);
-
 		EntityRef(const EntityRef& ref);
-
 		EntityRef(EntityRef&& ref);
-
 		~EntityRef();
-
 		void operator=(const EntityRef& ref);
-
 		void operator=(Entity* ent);
-
 		bool operator==(Entity* ent);
-
 		bool operator==(const EntityRef& ref);
-
 		operator bool();
-
 		operator Entity*();
-
 		Entity* operator->();
-
 		Entity& operator*();
-
 		Entity* get();
-
 		void set(Entity *ent);
-
 		static void invalidate(Entity* ent);
 
 	private:
@@ -109,23 +93,24 @@ namespace tridot2d {
 		std::vector<Entity*> pendingRemoves;
 		std::vector<Entity*> pendingAdds;
 
-		void update(float deltaTime);
+		~EntitySystem();
 
-		template<typename T>
-		Entity* addEntity(T* ent) {
-			pendingAdds.push_back(ent);
-			return ent;
-		}
-
-		template<typename T>
-		Entity *addEntity(const T& t = T()) {
-			Entity* ent = new T(t);
-			pendingAdds.push_back(ent);
-			return ent;
-		}
-
+		void update();
 		void removeEntity(Entity* ent);
 		void clear();
+
+		template<typename T>
+		T* addEntity(T* ent) {
+			pendingAdds.push_back(ent);
+			return ent;
+		}
+
+		template<typename T>
+		T *addEntity(const T& t = T()) {
+			T* ent = new T(t);
+			pendingAdds.push_back(ent);
+			return ent;
+		}
 	};
 
 }

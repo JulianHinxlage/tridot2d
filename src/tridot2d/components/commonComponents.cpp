@@ -3,36 +3,24 @@
 //
 
 #include "commonComponents.h"
+#include "systems/AssetsManager.h"
 #include "render/Renderer2D.h"
+#include "common/Singleton.h"
 #include "systems/Time.h"
 
 namespace tridot2d {
-
-	std::shared_ptr<Texture> TextureManager::get(const std::string& filename) {
-		auto i = textures.find(filename);
-		if (i != textures.end()) {
-			return i->second;
-		}
-		if (filename == "") {
-			textures[filename] = nullptr;
-			return nullptr;
-		}
-		auto texture = std::make_shared<Texture>();
-		texture->load(directory + filename);
-		textures[filename] = texture;
-		return texture;
-	};
 
 	Sprite::Sprite(const std::string& texture, Color color) {
 		this->color = color;
 		this->texture = Singleton::get<TextureManager>()->get(texture);
 	}
 
-	void Sprite::update(Entity& entity, float deltaTime) {
+	void Sprite::update(Entity& entity) {
 		Singleton::get<Renderer2D>()->submitQuad(entity.position + offset, entity.scale * scale, entity.rotation + rotation, depth, texture.get(), color, coords1, coords2);
 	};
 
-	void Velocity::update(Entity& ent, float dt) {
+	void Velocity::update(Entity& ent) {
+		float dt = Singleton::get<Time>()->deltaTime;
 		ent.position += velocity * dt;
 		ent.rotation += angular * dt;
 	}
@@ -41,8 +29,9 @@ namespace tridot2d {
 		timeLeft = time;
 	}
 
-	void LifeTime::update(Entity& ent, float deltaTime) {
-		timeLeft -= deltaTime;
+	void LifeTime::update(Entity& ent) {
+		float dt = Singleton::get<Time>()->deltaTime;
+		timeLeft -= dt;
 		if (timeLeft <= 0) {
 			Singleton::get<EntitySystem>()->removeEntity(&ent);
 		}
@@ -87,7 +76,7 @@ namespace tridot2d {
 		return animations[animationId];
 	}
 
-	void SpriteAnimation::update(Entity& ent, float detaTime) {
+	void SpriteAnimation::update(Entity& ent) {
 		auto i = animations.find(currentAnimationId);
 		if (i != animations.end()) {
 			Animation &anim = i->second;
@@ -108,7 +97,7 @@ namespace tridot2d {
 				}
 			}
 		}
-		time += detaTime;
+		time += Singleton::get<Time>()->deltaTime;
 	}
 
 }

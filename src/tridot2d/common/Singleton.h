@@ -21,11 +21,13 @@ namespace tridot2d {
 		}
 
 		template<typename Class>
-		static Class* set(Class* calss) {
+		static Class* set(Class* calss, bool destroy = true) {
 			static Class** instance = getInstance<Class>();
 			if (*instance != nullptr) {
 				if (*instance != calss) {
-					delete* instance;
+					if (destroy) {
+						delete* instance;
+					}
 					*instance = nullptr;
 				}
 			}
@@ -35,11 +37,7 @@ namespace tridot2d {
 
 		template<typename Class>
 		static void reset() {
-			Class** instance = getInstance<Class>();
-			if (*instance != nullptr) {
-				delete *instance;
-				*instance = nullptr;
-			}
+			set<Class>(nullptr);
 		}
 
 	private:

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Audio.h"
-#include "systems/EntitySystem.h"
+#include "core/EntitySystem.h"
 
 namespace tridot2d {
 
@@ -13,7 +13,7 @@ namespace tridot2d {
 	public:
 		float volume = 1.0f;
 
-		void update(Entity& ent, float dt) override;
+		void update(Entity& ent) override;
 	};
 
 	class AudioSource : public Component {
@@ -28,7 +28,7 @@ namespace tridot2d {
 		void play();
 		void stop();
 
-		void update(Entity& ent, float dt) override;
+		void update(Entity& ent) override;
 	};
 
 }

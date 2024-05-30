@@ -105,19 +105,4 @@ namespace tridot2d {
         alDeleteSources(1, &id);
     }
 
-    std::shared_ptr<Audio> AudioManager::get(const std::string& filename) {
-        auto i = audios.find(filename);
-        if (i != audios.end()) {
-            return i->second;
-        }
-        if (filename == "") {
-            audios[filename] = nullptr;
-            return nullptr;
-        }
-        auto audio = std::make_shared<Audio>();
-        audio->load(directory + filename);
-        audios[filename] = audio;
-        return audio;
-    }
-
 }

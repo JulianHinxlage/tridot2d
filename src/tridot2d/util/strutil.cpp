@@ -4,6 +4,7 @@
 
 #include "strutil.h"
 #include <fstream>
+#include <filesystem>
 
 namespace tridot2d {
 
@@ -100,6 +101,17 @@ namespace tridot2d {
 
 	std::string replace(const std::string& string, const std::string& search, const std::string& replacement) {
 		return join(split(string, search, true), replacement);
+	}
+
+	std::string searchPath(std::string path) {
+		std::string orig = path;
+		for (int i = 0; i < 3; i++) {
+			if (std::filesystem::exists(path)) {
+				return path;
+			}
+			path = "../" + path;
+		}
+		return orig;
 	}
 
 	int match(const std::string& string1, const std::string& string2) {

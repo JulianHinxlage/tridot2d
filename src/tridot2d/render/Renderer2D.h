@@ -21,7 +21,7 @@ namespace tridot2d {
 		void submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2 &coords1 = {0, 0}, const glm::vec2 &coords2 = {1, 1});
 		void submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2& coords1 = { 0, 0 }, const glm::vec2& coords2 = { 1, 1 });
 		void submitLine(glm::vec2 p1, glm::vec2 p2, float depth = 0, Color color = color::white, float thickness1 = 1, float thickness2 = 1, bool pixelScale = true);
-		void begin(const glm::mat4& cameraMatrix = glm::mat4(1), bool clear = true);
+		void begin(const glm::mat4& cameraMatrix = glm::mat4(1), bool clear = true, bool enableDepth = true);
 		void end();
 
 	private:

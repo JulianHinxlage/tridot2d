@@ -10,14 +10,6 @@ namespace tridot2d {
 
 	std::map<Entity*, std::set<EntityRef*>> EntityRef::refs;
 
-	void Entity::updateComponents(float deltaTime) {
-		for (auto& comp : components) {
-			if (comp) {
-				comp->update(*this, deltaTime);
-			}
-		}
-	}
-
 	EntityRef::EntityRef() {
 		set(nullptr);
 
@@ -97,7 +89,11 @@ namespace tridot2d {
 		}
 	}
 
-	void EntitySystem::update(float deltaTime) {
+	EntitySystem::~EntitySystem() {
+		clear();
+	}
+
+	void EntitySystem::update() {
 		for (auto* ent : pendingRemoves) {
 			int index = ent->entityIndex;
 			if (index >= 0 && index < entities.size()) {
@@ -121,8 +117,12 @@ namespace tridot2d {
 		for (auto& entity : entities) {
 			if (entity) {
 				if (entity->active) {
-					entity->updateComponents(deltaTime);
-					entity->update(deltaTime);
+					for (auto& comp : entity->components) {
+						if (comp) {
+							comp->update(*entity);
+						}
+					}
+					entity->update();
 				}
 			}
 		}
@@ -141,6 +141,15 @@ namespace tridot2d {
 			}
 		}
 		entities.clear();
+		for (auto& entity : pendingAdds) {
+			if (entity) {
+				EntityRef::invalidate(entity);
+				delete entity;
+				entity = nullptr;
+			}
+		}
+		pendingAdds.clear();
+		pendingRemoves.clear();
 	}
 
 }
