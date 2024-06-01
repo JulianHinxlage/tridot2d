@@ -16,6 +16,6 @@
 #include "audio/AudioSystem.h"
 #include "render/Renderer2D.h"
 #include "render/TextRenderer.h"
-#include "components/commonComponents.h"
+#include "components/components.h"
 #include "common/Log.h"
 #include "util/strutil.h"

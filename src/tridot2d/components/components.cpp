@@ -2,7 +2,7 @@
 // Copyright (c) 2024 Julian Hinxlage. All rights reserved.
 //
 
-#include "commonComponents.h"
+#include "components.h"
 #include "systems/AssetsManager.h"
 #include "render/Renderer2D.h"
 #include "common/Singleton.h"

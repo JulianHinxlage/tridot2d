@@ -4,227 +4,265 @@
 
 #include "Renderer2D.h"
 #include "RenderContext.h"
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <fstream>
+#include <algorithm>
 
-static const char* shaderSource =
-{
+static const char* shaderSource = {
 #include "shader/2d.glsl"
-};
-
-static const char* lineShaderSource =
-{
-#include "shader/line.glsl"
 };
 
 namespace tridot2d {
 
-	void Renderer2D::init(bool useFrameBuffer, int resolutionX, int resolutionY) {
+	void Renderer2D::init(bool unused) {
 		shader = std::make_shared<Shader>();
+		circelTexture = std::make_shared<Texture>();
+		mesh = std::make_shared<VertexArray>();
+		vertexBuffer = std::make_shared<Buffer>();
+
 		shader->loadFromSource(shaderSource);
 
-		blankTexture = std::make_shared<Texture>();
-		blankTexture->create(1, 1);
-		Color color = color::white;
-		blankTexture->setData(&color, 1);
+		Image circel;
+		circel.init(256, 256, 4, 8);
+		for (int x = 0; x < circel.getWidth(); x++) {
+			for (int y = 0; y < circel.getHeight(); y++) {
+				glm::vec2 p((float)x / circel.getWidth(), (float)y / circel.getHeight());
+				p -= 0.5f;
+				p *= 2.0f;
 
-		quadMesh = std::make_shared<Mesh>();
-		float vertecies[] = {
-			-0.5f, -0.5f, 0.0f,  0, 0, -1,   0, 1,
-			+0.5f, -0.5f, 0.0f,  0, 0, -1,   1, 1,
-			+0.5f, +0.5f, 0.0f,  0, 0, -1,   1, 0,
-			-0.5f, +0.5f, 0.0f,  0, 0, -1,   0, 0,
-		};
-		int32_t indices[] = {
-			0, 1, 2,
-			0, 2, 3,
-		};
-		quadMesh->create(vertecies, sizeof(vertecies) / 4, indices, sizeof(indices) / 4);
-
-		instanceBuffer = std::make_shared<Buffer>();
-		instanceBuffer->init(nullptr, 0, 1, BufferType::VERTEX_BUFFER, true);
-		quadMesh->vertexArray.addVertexBuffer(instanceBuffer, {
-			{Type::FLOAT, 4},
-			{Type::FLOAT, 4},
-			{Type::FLOAT, 4},
-			{Type::FLOAT, 4},
-			{Type::FLOAT, 4},
-			{Type::FLOAT, 2},
-			{Type::FLOAT, 2},
-		}, 1);
-
-		if (useFrameBuffer) {
-			frameBuffer = std::make_shared<FrameBuffer>();
-			frameBuffer->init(resolutionX, resolutionY, {
-					{ TextureAttachment::COLOR, color::white},
-					{ TextureAttachment::DEPTH},
+				if (glm::length(p) <= 1.0) {
+					circel.set(x, y, color::white);
 				}
-			);
-		}
-
-		lineShader = std::make_shared<Shader>();
-		lineShader->loadFromSource(lineShaderSource);
-		lineMesh = std::make_shared<VertexArray>();
-		lineBuffer = std::make_shared<Buffer>();
-		lineBuffer->init(nullptr, 0, sizeof(LineVertex), BufferType::VERTEX_BUFFER, true);
-		lineMesh->addVertexBuffer(lineBuffer, {
-			{Type::FLOAT, 3},
-			{Type::FLOAT, 4},
-		});
-
-		RenderContext::setBlend(true);
-		RenderContext::setDepth(true);
-	}
-
-	void Renderer2D::submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation, float depth, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
-		glm::mat4 transform(1);
-		transform = glm::translate(transform, glm::vec3(pos, depth * 0.01));
-		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
-		transform = glm::scale(transform, glm::vec3(scale, 0));
-
-		Instance instance;
-		instance.transform = transform;
-		instance.color = color.vec();
-		instance.coords1 = coords1;
-		instance.coords2 = coords2;
-		if (!texture) {
-			texture = blankTexture.get();
-		}
-		quadBatches[texture].instances.push_back(instance);
-	}
-
-	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation, float depth, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
-		glm::mat4 transform(1);
-		transform = glm::translate(transform, glm::vec3(pos, depth * 0.01));
-		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
-		transform = glm::scale(transform, glm::vec3(scale, 0));
-
-		Instance instance;
-		instance.transform = transform;
-		instance.color = color.vec();
-		instance.coords1 = coords1;
-		instance.coords2 = coords2;
-		if (!texture) {
-			texture = blankTexture.get();
-		}
-		circleBatches[texture].instances.push_back(instance);
-	}
-
-	void Renderer2D::submitLine(glm::vec2 p1, glm::vec2 p2, float depth, Color color, float thickness1, float thickness2, bool pixelScale) {
-		glm::vec2 diff = p1 - p2;
-		glm::vec2 dir = glm::normalize(diff);
-		glm::vec3 normal1 = { -dir.y, dir.x, 0 };
-		glm::vec3 normal2 = { -dir.y, dir.x, 0 };
-
-		if (p1 == lastLinePoint2) {
-			glm::vec2 diff = lastLinePoint1 - lastLinePoint2;
-			glm::vec2 dir = glm::normalize(diff);
-			normal1 = { -dir.y, dir.x, 0 };
-		}
-
-		lastLinePoint1 = p1;
-		lastLinePoint2 = p2;
-		p1 = cameraMatrix * glm::vec4(p1, 0, 1);
-		p2 = cameraMatrix * glm::vec4(p2, 0, 1);
-		normal1 = cameraMatrix * glm::vec4(normal1, 0);
-		normal2 = cameraMatrix * glm::vec4(normal2, 0);
-
-		LineVertex v1;
-		LineVertex v2;
-		LineVertex v3;
-		LineVertex v4;
-
-		v1.color = color.vec();
-		v2.color = v1.color;
-		v3.color = v1.color;
-		v4.color = v1.color;
-
-		glm::vec2 scale = { 0.5f, 0.5f };
-		if (pixelScale) {
-			scale = { 1.0f / resoultion.y / cameraMatrix[1][1], 1.0f / resoultion.y / cameraMatrix[1][1] };
-		}
-
-		v1.pos = glm::vec3(p1, depth * 0.01) + normal1 * thickness1 * glm::vec3(scale, 1);
-		v2.pos = glm::vec3(p2, depth * 0.01) + normal2 * thickness2 * glm::vec3(scale, 1);
-		v4.pos = glm::vec3(p1, depth * 0.01) - normal1 * thickness1 * glm::vec3(scale, 1);
-		v3.pos = glm::vec3(p2, depth * 0.01) - normal2 * thickness2 * glm::vec3(scale, 1);
-
-		lineBatch.vertices.push_back(v1);
-		lineBatch.vertices.push_back(v2);
-		lineBatch.vertices.push_back(v3);
-		lineBatch.vertices.push_back(v1);
-		lineBatch.vertices.push_back(v3);
-		lineBatch.vertices.push_back(v4);
-	}
-
-	void Renderer2D::begin(const glm::mat4& cameraMatrix, bool clear, bool enableDepth) {
-
-		if (enableDepth) {
-			RenderContext::setDepth(true);
-		}
-		else {
-			RenderContext::setDepth(false);
-		}
-
-		if (frameBuffer) {
-			frameBuffer->bind();
-			if (clear) {
-				frameBuffer->clear();
+				else {
+					circel.set(x, y, color::transparent);
+				}
 			}
 		}
-		else {
-			FrameBuffer::unbind();
-		}
-		this->cameraMatrix = cameraMatrix;
-		shader->bind();
-		shader->set("uProjection", cameraMatrix);
+		circelTexture->load(circel);
 
-		int x = 0;
-		int y = 0;
-		glfwGetFramebufferSize((GLFWwindow*)RenderContext::get(), &x, &y);
-		resoultion = { x, y };
+		vertexBuffer->init(nullptr, 0, sizeof(Vertex), BufferType::VERTEX_BUFFER, true);
+		mesh->addVertexBuffer(vertexBuffer, {
+			{Type::FLOAT, 3},
+			{Type::FLOAT, 4},
+			{Type::FLOAT, 2},
+			{Type::FLOAT, 1},
+			{Type::FLOAT, 2},
+			{Type::FLOAT, 1},
+		});
+	}
 
+	void Renderer2D::begin(const glm::mat4& projection) {
+		this->projection = projection;
 		lastLinePoint1 = { 0, 0 };
 		lastLinePoint2 = { 0, 0 };
 	}
 
+	Renderer2D::Instance &Renderer2D::submit(InstanceType type) {
+		instances.push_back({});
+		Instance& i = instances.back();
+		i.type = type;
+
+		switch (type)
+		{
+		case InstanceType::QUAD:
+			i.quad = QuadInstance();
+			break;
+		case InstanceType::LINE:
+			i.line = LineInstance();
+			break;
+		default:
+			break;
+		}
+
+		return i;
+	}
+
+	void Renderer2D::submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation, float depth, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
+		QuadInstance& i = submit(InstanceType::QUAD).quad;
+		i.position = pos;
+		i.scale = scale;
+		i.rotation = rotation;
+		i.depth = depth;
+		i.color = color;
+		i.texture = texture;
+		i.coordsTL = coords1;
+		i.coordsBR = coords2;
+	}
+
+	void Renderer2D::submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation, float depth, Texture* texture, Color color, const glm::vec2& coords1, const glm::vec2& coords2) {
+		QuadInstance& i = submit(InstanceType::QUAD).quad;
+		i.position = pos;
+		i.scale = scale;
+		i.rotation = rotation;
+		i.depth = depth;
+		i.color = color;
+		i.texture = texture;
+		i.coordsTL = coords1;
+		i.coordsBR = coords2;
+		i.texture2 = circelTexture.get();
+	}
+
+	void Renderer2D::submitLine(glm::vec2 p1, glm::vec2 p2, float depth, Color color , float thickness1, float thickness2) {
+		LineInstance& i = submit(InstanceType::LINE).line;
+		i.point1 = p1;
+		i.point2 = p2;
+		i.depth = depth;
+		i.color = color;
+		i.thickness1 = thickness1;
+		i.thickness2 = thickness2;
+		i.lastPoint1 = lastLinePoint1;
+		i.lastPoint2 = lastLinePoint2;
+		lastLinePoint1 = p1;
+		lastLinePoint2 = p2;
+	}
+
 	void Renderer2D::end() {
-		for (auto& i : circleBatches) {
-			shader->bind();
-			shader->set("uSize", 1.0f);
-			instanceBuffer->setData(i.second.instances.data(), i.second.instances.size() * sizeof(Instance), 0);
-			i.first->bind(0);
-			shader->set("uTexture", 0);
-			quadMesh->vertexArray.submit(-1, i.second.instances.size());
-			i.second.instances.clear();
+		std::sort(instances.begin(), instances.end(), [](Instance& a, Instance& b) {
+			return a.quad.depth > b.quad.depth;
+		});
+
+		FrameBuffer::unbind();
+		RenderContext::setBlend(true);
+		RenderContext::setDepth(false);
+
+		if (batches.size() == 0) {
+			batches.push_back(std::make_shared<Batch>());
+		}
+		Batch* batch = batches[0].get();
+
+		for (auto& it : instances) {
+			BaseInstance& i = it.quad;
+
+			Vertex v1;
+			Vertex v2;
+			Vertex v3;
+			Vertex v4;
+
+			v1.color = i.color.vec();
+			v2.color = i.color.vec();
+			v3.color = i.color.vec();
+			v4.color = i.color.vec();
+
+			if (i.texture != nullptr) {
+				if (!batch->textures.contains(i.texture)) {
+					batch->textures[i.texture] = batch->textures.size();
+				}
+				float textureIndex = (float)batch->textures[i.texture];
+				v1.textureIndex = textureIndex;
+				v2.textureIndex = textureIndex;
+				v3.textureIndex = textureIndex;
+				v4.textureIndex = textureIndex;
+
+				v1.texCorrds = glm::vec2(i.coordsTL.x, i.coordsBR.y);
+				v2.texCorrds = glm::vec2(i.coordsBR.x, i.coordsBR.y);
+				v3.texCorrds = glm::vec2(i.coordsBR.x, i.coordsTL.y);
+				v4.texCorrds = glm::vec2(i.coordsTL.x, i.coordsTL.y);
+			}
+
+			switch (it.type)
+			{
+			case InstanceType::QUAD: {
+				auto& i = it.quad;
+
+				i.scale *= 0.5f;
+				v1.position = glm::vec3(-i.scale.x, -i.scale.y, 0);
+				v2.position = glm::vec3(+i.scale.x, -i.scale.y, 0);
+				v3.position = glm::vec3(+i.scale.x, +i.scale.y, 0);
+				v4.position = glm::vec3(-i.scale.x, +i.scale.y, 0);
+
+				if (i.rotation != 0) {
+					float sin = glm::sin(i.rotation);
+					float cos = glm::cos(i.rotation);
+					v1.position = glm::vec3(v1.position.x * cos - v1.position.y * sin, v1.position.x * sin + v1.position.y * cos, v1.position.z);
+					v2.position = glm::vec3(v2.position.x * cos - v2.position.y * sin, v2.position.x * sin + v2.position.y * cos, v2.position.z);
+					v3.position = glm::vec3(v3.position.x * cos - v3.position.y * sin, v3.position.x * sin + v3.position.y * cos, v3.position.z);
+					v4.position = glm::vec3(v4.position.x * cos - v4.position.y * sin, v4.position.x * sin + v4.position.y * cos, v4.position.z);
+				}
+
+				v1.position += glm::vec3(i.position, i.depth * 0.01);
+				v2.position += glm::vec3(i.position, i.depth * 0.01);
+				v3.position += glm::vec3(i.position, i.depth * 0.01);
+				v4.position += glm::vec3(i.position, i.depth * 0.01);
+
+
+				if(i.texture2 != nullptr) {
+					if (!batch->textures.contains(i.texture2)) {
+						batch->textures[i.texture2] = batch->textures.size();
+					}
+					float textureIndex = (float)batch->textures[i.texture2];
+					v1.textureIndex2 = textureIndex;
+					v2.textureIndex2 = textureIndex;
+					v3.textureIndex2 = textureIndex;
+					v4.textureIndex2 = textureIndex;
+
+
+					v1.texCorrds2 = glm::vec2(i.coordsTL2.x, i.coordsBR2.y);
+					v2.texCorrds2 = glm::vec2(i.coordsBR2.x, i.coordsBR2.y);
+					v3.texCorrds2 = glm::vec2(i.coordsBR2.x, i.coordsTL2.y);
+					v4.texCorrds2 = glm::vec2(i.coordsTL2.x, i.coordsTL2.y);
+				}
+
+				break;
+			}
+			case InstanceType::LINE: {
+				auto& i = it.line;
+
+				glm::vec2 diff = i.point1 - i.point2;
+				glm::vec2 dir = glm::normalize(diff);
+				glm::vec2 normal1 = { -dir.y, dir.x };
+				glm::vec2 normal2 = { -dir.y, dir.x };
+
+				if (i.point1 == i.lastPoint2) {
+					glm::vec2 diff = i.lastPoint1 - i.lastPoint2;
+					glm::vec2 dir = glm::normalize(diff);
+					normal1 = { -dir.y, dir.x };
+				}
+				if (i.point2 == i.lastPoint1) {
+					glm::vec2 diff = i.lastPoint1 - i.lastPoint2;
+					glm::vec2 dir = glm::normalize(diff);
+					normal2 = { -dir.y, dir.x };
+				}
+
+				v1.position = glm::vec3(i.point1 + normal1 * i.thickness1 * 0.5f, i.depth * 0.01);
+				v2.position = glm::vec3(i.point2 + normal2 * i.thickness2 * 0.5f, i.depth * 0.01);
+				v3.position = glm::vec3(i.point2 - normal2 * i.thickness2 * 0.5f, i.depth * 0.01);
+				v4.position = glm::vec3(i.point1 - normal1 * i.thickness1 * 0.5f, i.depth * 0.01);
+
+				break;
+			}
+			default:
+				break;
+			}
+
+			batch->vertices.push_back(v1);
+			batch->vertices.push_back(v2);
+			batch->vertices.push_back(v3);
+			batch->vertices.push_back(v1);
+			batch->vertices.push_back(v3);
+			batch->vertices.push_back(v4);
+		}
+
+		shader->bind();
+		shader->set("uProjection", projection);
+
+		std::vector<int> ids;
+		for (int i = 0; i < batch->textures.size(); i++) {
+			ids.push_back(i);
+		}
+		shader->set("uTextures", ids.data(), ids.size());
+		
+		for (auto i : batch->textures) {
+			i.first->bind(i.second);
+		}
+
+		vertexBuffer->setData(batch->vertices.data(), batch->vertices.size() * sizeof(Vertex), 0);
+		mesh->submit(batch->vertices.size());
+
+		for (auto i : batch->textures) {
 			i.first->unbind();
 		}
-		circleBatches.clear();
-		for (auto& i : quadBatches) {
-			shader->bind();
-			instanceBuffer->setData(i.second.instances.data(), i.second.instances.size() * sizeof(Instance), 0);
-			shader->set("uSize", 4.0f);
-			i.first->bind(0);
-			shader->set("uTexture", 0);
-			quadMesh->vertexArray.submit(-1, i.second.instances.size());
-			i.second.instances.clear();
-			i.first->unbind();
-		}
-		quadBatches.clear();
 
-		if(lineBatch.vertices.size() > 0) {
-			lineShader->bind();
-			lineShader->set("uProjection", glm::mat4(1));
-			lineBuffer->setData(lineBatch.vertices.data(), lineBatch.vertices.size() * sizeof(LineVertex));
-			lineMesh->submit(lineBatch.vertices.size());
-			lineBatch.vertices.clear();
-		}
-
-		if (frameBuffer) {
-			frameBuffer->unbind();
-		}
+		instances.clear();
+		batch->vertices.clear();
+		batch->textures.clear();
 	}
 
 }

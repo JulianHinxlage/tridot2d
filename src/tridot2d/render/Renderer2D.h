@@ -16,54 +16,90 @@ namespace tridot2d {
 	class Renderer2D {
 	public:
 		std::shared_ptr<FrameBuffer> frameBuffer;
+		std::shared_ptr<Texture> circelTexture;
 
-		void init(bool useFrameBuffer, int resolutionX = 0, int resolutionY = 0);
-		void submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2 &coords1 = {0, 0}, const glm::vec2 &coords2 = {1, 1});
-		void submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2& coords1 = { 0, 0 }, const glm::vec2& coords2 = { 1, 1 });
-		void submitLine(glm::vec2 p1, glm::vec2 p2, float depth = 0, Color color = color::white, float thickness1 = 1, float thickness2 = 1, bool pixelScale = true);
-		void begin(const glm::mat4& cameraMatrix = glm::mat4(1), bool clear = true, bool enableDepth = true);
-		void end();
+		struct BaseInstance {
+		public:
+			float depth = 0;
+			Color color = color::white;
+			Texture* texture = nullptr;
+			glm::vec2 coordsTL = { 0, 0 };
+			glm::vec2 coordsBR = { 1, 1 };
+		};
 
-	private:
-		std::shared_ptr<Shader> shader;
-		std::shared_ptr<Texture> blankTexture;
-		std::shared_ptr<Mesh> quadMesh;
-		std::shared_ptr<Buffer> instanceBuffer;
+		struct QuadInstance : public BaseInstance {
+		public:
+			glm::vec2 position = { 0, 0 };
+			glm::vec2 scale = { 1, 1 };
+			float rotation = 0;
 
-		std::shared_ptr<Shader> lineShader;
-		std::shared_ptr<VertexArray> lineMesh;
-		std::shared_ptr<Buffer> lineBuffer;
+			Texture* texture2 = nullptr;
+			glm::vec2 coordsTL2 = { 0, 0 };
+			glm::vec2 coordsBR2 = { 1, 1 };
+		};
 
-		glm::mat4 cameraMatrix;
-		glm::vec2 resoultion;
-		glm::vec2 lastLinePoint1;
-		glm::vec2 lastLinePoint2;
+		struct LineInstance : public BaseInstance {
+		public:
+			glm::vec2 point1 = { 0, 0 };
+			glm::vec2 point2 = { 0, 0 };
+			float thickness1 = 1;
+			float thickness2 = 1;
+			glm::vec2 lastPoint1 = { 0, 0 };
+			glm::vec2 lastPoint2 = { 0, 0 };
+		};
+
+		enum InstanceType {
+			QUAD,
+			LINE,
+		};
 
 		class Instance {
 		public:
-			glm::mat4 transform;
-			glm::vec4 color;
-			glm::vec2 coords1;
-			glm::vec2 coords2;
+			InstanceType type;
+
+			union {
+				QuadInstance quad;
+				LineInstance line;
+			};
 		};
+
+		void init(bool unused);
+		void begin(const glm::mat4& projection);
+		Instance &submit(InstanceType type = InstanceType::QUAD);
+		void end();
+
+		void submitQuad(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2& coords1 = { 0, 0 }, const glm::vec2& coords2 = { 1, 1 });
+		void submitCircle(glm::vec2 pos, glm::vec2 scale, float rotation = 0, float depth = 0, Texture* texture = nullptr, Color color = color::white, const glm::vec2& coords1 = { 0, 0 }, const glm::vec2& coords2 = { 1, 1 });
+		void submitLine(glm::vec2 p1, glm::vec2 p2, float depth = 0, Color color = color::white, float thickness1 = 1, float thickness2 = 1);
+
+	private:
+		class Vertex {
+		public:
+			glm::vec3 position = { 0, 0, 0 };
+			glm::vec4 color = { 0, 0, 0, 0 };
+			glm::vec2 texCorrds = { 0, 0 };
+			float textureIndex = -1;
+			glm::vec2 texCorrds2 = { 0, 0 };
+			float textureIndex2 = -1;
+		};
+
+		typedef unsigned int Index;
+
 		class Batch {
 		public:
-			std::vector<Instance> instances;
+			std::vector<Vertex> vertices;
+			std::map<Texture*, int> textures;
 		};
 
-		class LineVertex {
-		public:
-			glm::vec3 pos;
-			glm::vec4 color;
-		};
-		class LineBatch {
-		public:
-			std::vector<LineVertex> vertices;
-		};
+		std::shared_ptr<Shader> shader;
+		std::shared_ptr<VertexArray> mesh;
+		std::shared_ptr<Buffer> vertexBuffer;
+		std::vector<Instance> instances;
+		std::vector<std::shared_ptr<Batch>> batches;
+		glm::mat4 projection;
 
-		std::map<Texture*, Batch> quadBatches;
-		std::map<Texture*, Batch> circleBatches;
-		LineBatch lineBatch;
+		glm::vec2 lastLinePoint1 = { 0, 0 };
+		glm::vec2 lastLinePoint2 = { 0, 0 };
 	};
 
 }
