@@ -13,7 +13,7 @@ namespace tridot2d {
 	public:
 		float volume = 1.0f;
 
-		void update(Entity& ent) override;
+		void update() override;
 	};
 
 	class AudioSource : public Component {
@@ -28,7 +28,7 @@ namespace tridot2d {
 		void play();
 		void stop();
 
-		void update(Entity& ent) override;
+		void update() override;
 	};
 
 }

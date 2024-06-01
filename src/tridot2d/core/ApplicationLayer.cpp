@@ -3,6 +3,7 @@
 //
 
 #include "ApplicationLayer.h"
+#include "EntitySystem.h"
 #include "common/Singleton.h"
 
 #include "systems/Time.h"
@@ -31,20 +32,37 @@ namespace tridot2d {
 		}
 	}
 
+	void ApplicationLayer::prepare() {
+		Singleton::set(entitySystem, false);
+	}
+
+	void ApplicationLayer::init() {}
+	
+	void ApplicationLayer::preUpdate() {}
+	
+	void ApplicationLayer::update() {
+		entitySystem->update();
+	}
+
+	void ApplicationLayer::postUpdate() {}
+
+
+
 	void MainLayer::init() {
+		ApplicationLayer::init();
+
 		Singleton::get<Time>()->init();
 		Singleton::get<Input>()->init();
 		Singleton::get<Random>()->init();
-		Singleton::get<Camera>();
 		Singleton::get<PhysicsSystem>()->init();
 		Singleton::get<AudioSystem>()->init();
 		Singleton::get<ParticleSystem>()->init();
 
 		Singleton::get<TextureManager>()->directory = searchPath("assets/textures") + "/";
 		Singleton::get<AudioManager>()->directory = searchPath("assets/audio") + "/";
+
 		auto *renderer = Singleton::get<Renderer2D>();
 		auto *textRenderer = Singleton::get<TextRenderer>();
-
 		renderer->init(false);
 		textRenderer->renderer = renderer;
 		textRenderer->init();
@@ -52,33 +70,66 @@ namespace tridot2d {
 	}
 
 	void MainLayer::preUpdate(){
+		ApplicationLayer::prepare();
+
 		auto *time = Singleton::get<Time>();
 		time->update();
 		Singleton::get<Input>()->update();
-		auto* camera = Singleton::get<Camera>();
-		camera->update(time->deltaTime);
 		Singleton::get<PhysicsSystem>()->update(time->deltaTime, 4);
 		Singleton::get<AudioSystem>()->update();
-		Singleton::get<ParticleSystem>()->update(time->deltaTime);
+		Singleton::get<ParticleSystem>()->update();
+	}
 
 
+
+	SceneLayer::SceneLayer() {
+		camera = new Camera();
+	}
+
+	SceneLayer::~SceneLayer() {
+		if (camera) {
+			delete camera;
+			camera = nullptr;
+		}
+	}
+
+	void SceneLayer::prepare() {
+		ApplicationLayer::prepare();
+		Singleton::set(camera, false);
+	}
+
+	void SceneLayer::init() {
+		ApplicationLayer::init();
+	}
+
+	void SceneLayer::preUpdate() {
+		ApplicationLayer::preUpdate();
+		camera->update();
 		auto* renderer = Singleton::get<Renderer2D>();
-		auto* textRenderer = Singleton::get<TextRenderer>();
 		renderer->begin(camera->getMatrix());
 	}
 
-	void MainLayer::postUpdate() {
+	void SceneLayer::postUpdate() {
+		ApplicationLayer::postUpdate();
 		auto* renderer = Singleton::get<Renderer2D>();
 		renderer->end();
 	}
 
+
+
 	void UiLayer::preUpdate() {
+		ApplicationLayer::preUpdate();
+		camera->update();
+		camera->position = camera->resolution * 0.5f;
+		camera->scale = camera->resolution * 0.5f;
+		camera->scale.x /= camera->aspectRatio;
 		auto* renderer = Singleton::get<Renderer2D>();
-		auto* camera = Singleton::get<Camera>();
-		renderer->begin(camera->getScreenMatrix());
+		renderer->begin(camera->getMatrix());
 	}
 
 	void UiLayer::postUpdate() {
+		ApplicationLayer::postUpdate();
+
 		auto* renderer = Singleton::get<Renderer2D>();
 		renderer->end();
 	}

@@ -27,11 +27,11 @@ namespace tridot2d {
 		}
 	}
 
-	void AudioSource::update(Entity& ent) {
+	void AudioSource::update() {
 		if (id != 0) {
 			if (positional) {
 				alSourcei(id, AL_SOURCE_RELATIVE, AL_FALSE);
-				alSource3f(id, AL_POSITION, ent.position.x, ent.position.y, 0);
+				alSource3f(id, AL_POSITION, entity->position.x, entity->position.y, 0);
 			}
 			else {
 				alSource3f(id, AL_POSITION, 0, 0, 0);
@@ -43,8 +43,8 @@ namespace tridot2d {
 		}
 	}
 
-	void AudioListener::update(Entity& ent) {
-		alListener3f(AL_POSITION, ent.position.x, ent.position.y, 0);
+	void AudioListener::update() {
+		alListener3f(AL_POSITION, entity->position.x, entity->position.y, 0);
 		alListener3f(AL_VELOCITY, 0, 0, 0);
 		alListenerf(AL_GAIN, volume);
 	}

@@ -5,20 +5,8 @@
 #pragma once
 
 #include "ApplicationLayer.h"
-/*
-#include "systems/Window.h"
-#include "systems/Input.h"
-#include "core/EntitySystem.h"
-#include "systems/Random.h"
-#include "render/Renderer2D.h"
-#include "systems/Time.h"
-#include "audio/AudioSystem.h"
-#include "physics/PhysicsSystem.h"
-#include "systems/Camera.h"
-#include "particles/ParticleSystem.h"
-#include "components/commonComponents.h"
-#include "render/TextRenderer.h"
-*/
+#include <vector>
+#include <string>
 
 namespace tridot2d {
 

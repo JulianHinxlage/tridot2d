@@ -26,7 +26,7 @@ namespace tridot2d {
 			}
 		}
 
-		void init(Entity& ent) override {
+		void init() override {
 			body = Singleton::get<PhysicsSystem>()->addBody();
 			body->mass = mass;
 			body->drag = { 1, 1 };
@@ -37,16 +37,16 @@ namespace tridot2d {
 			else {
 				body->type = BodyType::DYNAMIC;
 			}
-			body->position = ent.position;
-			body->rotation = ent.rotation;
-			body->scale = ent.scale;
-			body->entity = &ent;
+			body->position = entity->position;
+			body->rotation = entity->rotation;
+			body->scale = entity->scale;
+			body->entity = entity;
 		}
 
-		void update(Entity& ent) override {
-			ent.position = body->position;
-			ent.rotation = body->rotation;
-			body->scale = ent.scale;
+		void update() override {
+			entity->position = body->position;
+			entity->rotation = body->rotation;
+			body->scale = entity->scale;
 		}
 	};
 

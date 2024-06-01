@@ -15,15 +15,18 @@ namespace tridot2d {
 
 	class Component {
 	public:
+		class Entity* entity = nullptr;
+
 		virtual ~Component() {}
-		virtual void update(class Entity& entity) {};
-		virtual void init(class Entity& entity) {};
+		virtual void update() {};
+		virtual void init() {};
 	};
 
 	class Entity {
 	public:
 		std::vector<std::shared_ptr<Component>> components;
 		bool active = true;
+		class EntitySystem* entitySystem = nullptr;
 
 		glm::vec2 position = { 0, 0 };
 		glm::vec2 scale = { 1, 1 };
@@ -38,7 +41,8 @@ namespace tridot2d {
 		T *addComponent(const T& t = T()) {
 			auto comp = std::make_shared<T>(t);
 			components.push_back(comp);
-			((Component*)comp.get())->init(*this);
+			((Component*)comp.get())->entity = this;
+			((Component*)comp.get())->init();
 			return comp.get();
 		}
 
@@ -57,6 +61,8 @@ namespace tridot2d {
 		virtual void update() {};
 		virtual void postUpdate() {};
 		virtual void init() {};
+
+		void removeEntity();
 
 	private:
 		int entityIndex = -1;

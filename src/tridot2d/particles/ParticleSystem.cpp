@@ -5,11 +5,12 @@
 #include "ParticleSystem.h"
 #include "common/Singleton.h"
 #include "render/Renderer2D.h"
+#include "systems/Time.h"
 
 namespace tridot2d {
 
-	void ParticleSystem::update(float deltaTime) {
-		time += deltaTime;
+	void ParticleSystem::update() {
+		time += Singleton::get<Time>()->deltaTime;
 		auto &renderer = *Singleton::get<Renderer2D>();
 		
 		for (int i = 0; i < particles.size(); i++) {

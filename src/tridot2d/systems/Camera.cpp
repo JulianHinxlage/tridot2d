@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "common/Singleton.h"
 #include "Input.h"
+#include "Time.h"
 #include "Window.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
@@ -18,14 +19,7 @@ namespace tridot2d {
 		return matrix;
 	}
 
-	glm::mat4 Camera::getScreenMatrix() {
-		glm::mat4 matrix(1);
-		matrix = glm::scale(matrix, glm::vec3((1.0f / resolution.x * 2.0f), (1.0f / resolution.y * 2.0f), 1));
-		matrix = glm::translate(matrix, glm::vec3(-resolution * 0.5f, 0));
-		return matrix;
-	}
-
-	void Camera::update(float deltaTime) {
+	void Camera::update() {
 		Window* window = Singleton::get<Window>();
 		resolution = { window->getWidth(), window->getHight() };
 		aspectRatio = resolution.x / resolution.y;
@@ -52,7 +46,8 @@ namespace tridot2d {
 		}
 		if (followEnabled) {
 			if (followEntity) {
-				float factor = deltaTime * followSpeed;
+				float dt = Singleton::get<Time>()->deltaTime;
+				float factor = dt * followSpeed;
 				if (followSpeed == -1) {
 					factor = 1;
 				}
