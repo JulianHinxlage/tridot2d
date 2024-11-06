@@ -193,7 +193,6 @@ namespace tridot2d {
 					v3.textureIndex2 = textureIndex;
 					v4.textureIndex2 = textureIndex;
 
-
 					v1.texCorrds2 = glm::vec2(i.coordsTL2.x, i.coordsBR2.y);
 					v2.texCorrds2 = glm::vec2(i.coordsBR2.x, i.coordsBR2.y);
 					v3.texCorrds2 = glm::vec2(i.coordsBR2.x, i.coordsTL2.y);

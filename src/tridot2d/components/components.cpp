@@ -15,25 +15,25 @@ namespace tridot2d {
 		this->texture = Singleton::get<TextureManager>()->get(texture);
 	}
 
-	void Sprite::update(Entity& entity) {
-		Singleton::get<Renderer2D>()->submitQuad(entity.position + offset, entity.scale * scale, entity.rotation + rotation, depth, texture.get(), color, coords1, coords2);
+	void Sprite::update() {
+		Singleton::get<Renderer2D>()->submitQuad(entity->position + offset, entity->scale * scale, entity->rotation + rotation, depth, texture.get(), color, coords1, coords2);
 	};
 
-	void Velocity::update(Entity& ent) {
+	void Velocity::update() {
 		float dt = Singleton::get<Time>()->deltaTime;
-		ent.position += velocity * dt;
-		ent.rotation += angular * dt;
+		entity->position += velocity * dt;
+		entity->rotation += angular * dt;
 	}
 
 	LifeTime::LifeTime(float time) {
 		timeLeft = time;
 	}
 
-	void LifeTime::update(Entity& ent) {
+	void LifeTime::update() {
 		float dt = Singleton::get<Time>()->deltaTime;
 		timeLeft -= dt;
 		if (timeLeft <= 0) {
-			Singleton::get<EntitySystem>()->removeEntity(&ent);
+			Singleton::get<EntitySystem>()->removeEntity(entity);
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace tridot2d {
 		return animations[animationId];
 	}
 
-	void SpriteAnimation::update(Entity& ent) {
+	void SpriteAnimation::update() {
 		auto i = animations.find(currentAnimationId);
 		if (i != animations.end()) {
 			Animation &anim = i->second;

@@ -22,7 +22,7 @@ namespace tridot2d {
 		glm::vec2 coords2 = { 1, 1 };
 
 		Sprite(const std::string& texture, Color color = color::white);
-		void update(Entity& entity) override;
+		void update() override;
 	};
 
 	class Velocity : public Component {
@@ -33,7 +33,7 @@ namespace tridot2d {
 		Velocity(const glm::vec2 velocity = { 0, 0 }, float angular = 0)
 			: velocity(velocity), angular(angular) {}
 
-		void update(Entity& ent) override;
+		void update() override;
 	};
 
 	class LifeTime : public Component {
@@ -42,7 +42,7 @@ namespace tridot2d {
 
 		LifeTime(float time = 1);
 
-		void update(Entity& ent) override;
+		void update() override;
 	};
 
 	class SpriteSheet {
@@ -86,7 +86,7 @@ namespace tridot2d {
 		Animation& add(int animationId, std::vector<int> spriteIndices = {}, float time = 1, bool loop = false);
 		void set(int animationId);
 
-		void update(Entity& ent) override;
+		void update() override;
 	};
 
 }

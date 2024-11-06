@@ -3,7 +3,9 @@
 //
 
 #include "Application.h"
+#include "EntitySystem.h"
 #include "systems/Window.h"
+#include "systems/Camera.h"
 #include "render/RenderContext.h"
 #include "common/Singleton.h"
 #include "util/strutil.h"
@@ -21,10 +23,9 @@ namespace tridot2d {
 	void Application::update() {
 		for (auto& layer : layers) {
 			if (layer) {
-				if (layer->avtive) {
-					Singleton::set(layer->entitySystem, false);
+				if (layer->active) {
+					layer->prepare();
 					layer->preUpdate();
-					layer->entitySystem->update();
 					layer->update();
 					layer->postUpdate();
 				}
@@ -41,7 +42,7 @@ namespace tridot2d {
 
 		for (auto& layer : layers) {
 			if (layer) {
-				Singleton::set(layer->entitySystem, false);
+				layer->prepare();
 				layer->init();
 			}
 		}
