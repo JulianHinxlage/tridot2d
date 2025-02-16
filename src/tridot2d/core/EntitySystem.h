@@ -35,6 +35,8 @@ namespace tridot2d {
 		Entity(const glm::vec2 position = { 0, 0 }, const glm::vec2& scale = { 1, 1 }, float rotation = 0)
 			: position(position), scale(scale), rotation(rotation) {}
 
+		Entity(const Entity& ent);
+
 		virtual ~Entity() {}
 
 		template<typename T>

@@ -63,7 +63,7 @@ namespace tridot2d {
 			};
 		};
 
-		void init(bool unused);
+		void init();
 		void begin(const glm::mat4& projection);
 		Instance &submit(InstanceType type = InstanceType::QUAD);
 		void end();

@@ -17,5 +17,6 @@
 #include "render/Renderer2D.h"
 #include "render/TextRenderer.h"
 #include "components/components.h"
+#include "ui/UiElement.h"
 #include "common/Log.h"
 #include "util/strutil.h"

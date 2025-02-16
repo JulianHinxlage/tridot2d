@@ -12,7 +12,7 @@ static const char* shaderSource = {
 
 namespace tridot2d {
 
-	void Renderer2D::init(bool unused) {
+	void Renderer2D::init() {
 		shader = std::make_shared<Shader>();
 		circelTexture = std::make_shared<Texture>();
 		mesh = std::make_shared<VertexArray>();

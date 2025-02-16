@@ -63,7 +63,7 @@ namespace tridot2d {
 
 		auto *renderer = Singleton::get<Renderer2D>();
 		auto *textRenderer = Singleton::get<TextRenderer>();
-		renderer->init(false);
+		renderer->init();
 		textRenderer->renderer = renderer;
 		textRenderer->init();
 		textRenderer->setFont(searchPath("assets/font") + "/font.ttf", 160);

@@ -33,7 +33,7 @@ namespace tridot2d {
 		float dt = Singleton::get<Time>()->deltaTime;
 		timeLeft -= dt;
 		if (timeLeft <= 0) {
-			Singleton::get<EntitySystem>()->removeEntity(entity);
+			entity->removeEntity();
 		}
 	}
 

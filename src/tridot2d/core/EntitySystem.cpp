@@ -14,9 +14,21 @@ namespace tridot2d {
 		entitySystem->removeEntity(this);
 	}
 
+	Entity::Entity(const Entity& ent) {
+		components = ent.components;
+		active = ent.active;
+		entitySystem = ent.entitySystem;
+		position = ent.position;
+		scale = ent.scale;
+		rotation = ent.rotation;
+		entityIndex = ent.entityIndex;
+		for (auto& comp : components) {
+			comp->entity = this;
+		}
+	}
+
 	EntityRef::EntityRef() {
 		set(nullptr);
-
 	}
 
 	EntityRef::EntityRef(Entity* ent) {
