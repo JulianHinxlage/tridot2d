@@ -17,7 +17,7 @@ namespace tridot2d {
         float frameTime;
         float time;
         float inGameTime;
-        float frameCounter;
+        int frameCounter;
 
         //options
         float deltaTimeFactor;

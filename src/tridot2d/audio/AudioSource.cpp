@@ -5,10 +5,15 @@
 #include "AudioSource.h"
 #include "AudioSystem.h"
 #include "common/Singleton.h"
+#include "systems/AssetsManager.h"
 #include "AL/al.h"
 #include "AL/alc.h"
 
 namespace tridot2d {
+
+	AudioSource::AudioSource(const std::string& audio) {
+		this->audio = Singleton::get<AudioManager>()->get(audio);
+	}
 
 	void AudioSource::play() {
 		if (Singleton::get<AudioSystem>()) {

@@ -34,7 +34,7 @@ assign_source_group(ALL_SOURCES)
 
 project(tridot2d)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/tridot2d/*.cpp src/tridot2d/*.h)
-file(GLOB IMGUI_SOURCES CONFIGURE_DEPENDS libs/imgui/*.cpp libs/imgui/misc/cpp/imgui_stdlib.cpp libs/imgui/backends/imgui_impl_glfw.cpp libs/imgui/backends/imgui_impl_opengl3.cpp)
+file(GLOB IMGUI_SOURCES CONFIGURE_DEPENDS libs/imgui/*.cpp libs/imgui/misc/cpp/imgui_stdlib.cpp libs/imgui/backends/imgui_impl_glfw.cpp libs/imgui/backends/imgui_impl_opengl3.cpp libs/implot/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${IMGUI_SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC src src/tridot2d)
 add_subdirectory(libs/glm)
@@ -48,7 +48,7 @@ if(WIN32)
 else()
     target_link_libraries(${PROJECT_NAME} glm glfw GL glew pthread stdc++fs OpenAL)
 endif()
-target_include_directories(${PROJECT_NAME} PUBLIC libs libs/glm libs/glfw/include libs/glew/include libs/imgui libs/imgui/backends libs/stb extern/openal/include)
+target_include_directories(${PROJECT_NAME} PUBLIC libs libs/glm libs/glfw/include libs/glew/include libs/imgui libs/imgui/backends libs/implot libs/stb extern/openal/include)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${SOLUTION_NAME})
 
 

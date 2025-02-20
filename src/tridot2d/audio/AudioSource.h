@@ -25,6 +25,8 @@ namespace tridot2d {
 		bool looping = false;
 		uint32_t id = 0;
 
+		AudioSource(const std::string& audio = "");
+
 		void play();
 		void stop();
 

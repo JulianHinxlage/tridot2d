@@ -48,7 +48,7 @@ namespace tridot2d {
 
 
 
-	void MainLayer::init() {
+	void SystemLayer::init() {
 		ApplicationLayer::init();
 
 		Singleton::get<Time>()->init();
@@ -69,8 +69,8 @@ namespace tridot2d {
 		textRenderer->setFont(searchPath("assets/font") + "/font.ttf", 160);
 	}
 
-	void MainLayer::preUpdate(){
-		ApplicationLayer::prepare();
+	void SystemLayer::preUpdate(){
+		ApplicationLayer::preUpdate();
 
 		auto *time = Singleton::get<Time>();
 		time->update();

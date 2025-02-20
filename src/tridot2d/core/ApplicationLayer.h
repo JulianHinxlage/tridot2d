@@ -20,7 +20,7 @@ namespace tridot2d {
 		virtual void postUpdate();
 	};
 
-	class MainLayer : public ApplicationLayer {
+	class SystemLayer : public ApplicationLayer {
 	public:
 		void init() override;
 		virtual void preUpdate() override;

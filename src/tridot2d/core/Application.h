@@ -14,10 +14,11 @@ namespace tridot2d {
 	public:
 		std::vector<ApplicationLayer*> layers;
 		class Window* window;
+		class DebugUI* debugUI;
 
 		virtual void run();
 		virtual void update();
-		virtual void init(int width, int height, const std::string &title);
+		virtual void init(int width, int height, const std::string &title, int swapInterval = 1, bool maximized = false, bool fullscreen = false);
 		virtual void shutdown();
 		
 		template<typename Layer>

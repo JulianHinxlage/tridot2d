@@ -6,6 +6,7 @@
 #include "EntitySystem.h"
 #include "systems/Window.h"
 #include "systems/Camera.h"
+#include "systems/DebugUI.h"
 #include "render/RenderContext.h"
 #include "common/Singleton.h"
 #include "util/strutil.h"
@@ -14,8 +15,11 @@ namespace tridot2d {
 
 	void Application::run() {
 		while (window->isOpen()) {
+			window->update();
+			debugUI->beginFrame();
 			window->beginFrame();
 			update();
+			debugUI->endFrame();
 			window->endFrame();
 		}
 	}
@@ -33,12 +37,14 @@ namespace tridot2d {
 		}
 	}
 
-	void Application::init(int width, int height, const std::string& title) {
+	void Application::init(int width, int height, const std::string& title, int swapInterval, bool maximized, bool fullscreen) {
 		window = Singleton::get<Window>();
-		window->enableGUI = false;
 		window->alwaysRefresh = true;
-		window->init(width, height, title);
+		window->init(width, height, title, swapInterval, maximized, fullscreen);
 		RenderContext::set(window->getContext());
+
+		debugUI = Singleton::get<DebugUI>();
+		debugUI->init();
 
 		for (auto& layer : layers) {
 			if (layer) {
@@ -57,6 +63,7 @@ namespace tridot2d {
 		}
 		layers.clear();
 		RenderContext::set(nullptr);
+		debugUI->shutdown();
 		window->shutdown();
 	}
 
