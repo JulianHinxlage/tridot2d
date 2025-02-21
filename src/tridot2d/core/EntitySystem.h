@@ -44,7 +44,9 @@ namespace tridot2d {
 			auto comp = std::make_shared<T>(t);
 			components.push_back(comp);
 			((Component*)comp.get())->entity = this;
-			((Component*)comp.get())->init();
+			if (entitySystem) {
+				((Component*)comp.get())->init();
+			}
 			return comp.get();
 		}
 

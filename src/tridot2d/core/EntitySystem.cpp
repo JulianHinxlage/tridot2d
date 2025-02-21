@@ -125,6 +125,12 @@ namespace tridot2d {
 
 		for (auto* ent : pendingAdds) {
 			ent->entityIndex = entities.size();
+			for (int i = 0; i < ent->components.size(); i++) {
+				auto* comp = ent->components[i].get();
+				if (comp) {
+					comp->init();
+				}
+			}
 			ent->entitySystem = this;
 			ent->init();
 			entities.push_back(ent);
