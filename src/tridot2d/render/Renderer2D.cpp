@@ -177,10 +177,10 @@ namespace tridot2d {
 					v4.position = glm::vec3(v4.position.x * cos - v4.position.y * sin, v4.position.x * sin + v4.position.y * cos, v4.position.z);
 				}
 
-				v1.position += glm::vec3(i.position, i.depth * 0.01);
-				v2.position += glm::vec3(i.position, i.depth * 0.01);
-				v3.position += glm::vec3(i.position, i.depth * 0.01);
-				v4.position += glm::vec3(i.position, i.depth * 0.01);
+				v1.position += glm::vec3(i.position, 0);
+				v2.position += glm::vec3(i.position, 0);
+				v3.position += glm::vec3(i.position, 0);
+				v4.position += glm::vec3(i.position, 0);
 
 
 				if(i.texture2 != nullptr) {

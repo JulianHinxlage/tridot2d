@@ -23,8 +23,8 @@ namespace tridot2d {
 
         magNearest = true;
         minNearest = false;
-        sRepeat = true;
-        tRepeat = true;
+        sRepeat = false;
+        tRepeat = false;
     }
 
     Texture::~Texture() {

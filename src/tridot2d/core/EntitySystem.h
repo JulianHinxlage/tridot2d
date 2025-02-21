@@ -19,6 +19,7 @@ namespace tridot2d {
 
 		virtual ~Component() {}
 		virtual void update() {};
+		virtual void preUpdate() {};
 		virtual void init() {};
 	};
 
@@ -44,7 +45,9 @@ namespace tridot2d {
 			auto comp = std::make_shared<T>(t);
 			components.push_back(comp);
 			((Component*)comp.get())->entity = this;
-			((Component*)comp.get())->init();
+			if (entitySystem) {
+				((Component*)comp.get())->init();
+			}
 			return comp.get();
 		}
 
@@ -103,6 +106,7 @@ namespace tridot2d {
 
 		~EntitySystem();
 
+		void updatePending();
 		void update();
 		void removeEntity(Entity* ent);
 		void clear();

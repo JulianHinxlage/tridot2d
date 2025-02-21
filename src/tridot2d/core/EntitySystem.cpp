@@ -109,7 +109,7 @@ namespace tridot2d {
 		clear();
 	}
 
-	void EntitySystem::update() {
+	void EntitySystem::updatePending() {
 		for (auto* ent : pendingRemoves) {
 			int index = ent->entityIndex;
 			if (index >= 0 && index < entities.size()) {
@@ -125,15 +125,26 @@ namespace tridot2d {
 
 		for (auto* ent : pendingAdds) {
 			ent->entityIndex = entities.size();
+			for (int i = 0; i < ent->components.size(); i++) {
+				auto* comp = ent->components[i].get();
+				if (comp) {
+					comp->init();
+				}
+			}
 			ent->entitySystem = this;
 			ent->init();
 			entities.push_back(ent);
 		}
 		pendingAdds.clear();
+	}
+
+	void EntitySystem::update() {
+		updatePending();
 
 		for (auto& entity : entities) {
 			if (entity) {
 				if (entity->active) {
+					entity->preUpdate();
 					for (auto& comp : entity->components) {
 						if (comp) {
 							comp->update();
