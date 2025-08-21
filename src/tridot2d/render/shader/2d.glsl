@@ -35,7 +35,7 @@ in float fTextureIndex;
 in vec2 fTexCoords2;
 in float fTextureIndex2;
 
-uniform sampler2D uTextures[32];
+uniform sampler2D uTextures[16];
 
 out vec4 oColor;
 

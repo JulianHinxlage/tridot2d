@@ -167,12 +167,12 @@ namespace tridot2d {
         std::ifstream in(filename, std::ios::binary);
         if (!in.is_open())
         {
-            Log::error("Could not open \"%s\"", filename);
+            Log::error("Could not open \"%s\"", filename.c_str());
             return nullptr;
         }
         if (!load_wav_file_header(in, channels, sampleRate, bitsPerSample, size))
         {
-            Log::error("Could not load wav header of \"%s\"", filename);
+            Log::error("Could not load wav header of \"%s\"", filename.c_str());
             return nullptr;
         }
 

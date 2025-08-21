@@ -42,8 +42,12 @@ namespace tridot2d {
 		atlases[file][size] = atlas;
 
 		std::string content = readFile(file);
+        if (content.size() == 0) {
+            Log::error("failed to load file %s", file.c_str());
+            return;
+        }
 		stbtt_fontinfo info;
-		if (!stbtt_InitFont(&info, (unsigned char*)content.data(), 0)) {
+        if (!stbtt_InitFont(&info, (unsigned char*)content.c_str(), 0)) {
 			Log::error("failed to load file %s", file.c_str());
 			return;
 		}

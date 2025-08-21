@@ -4,3 +4,6 @@ deploy*/
 .vscode/
 local/
 *.bak
+.DS_Store
+.DS_Store?
+.cache/

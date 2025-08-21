@@ -8,6 +8,9 @@
 #include <mutex>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
+#include <stdio.h>
+
 
 namespace tridot2d {
 
@@ -96,7 +99,7 @@ namespace tridot2d {
 				f.stream << "[" << logLevelName(level) << "] ";
 				char buf[102400];
 				try {
-					int i = vsprintf_s(buf, 102400, fmt, args);
+					int i = vsnprintf(buf, 102400, fmt, args);
 					buf[i] = '\0';
 				}
 				catch (...) {
@@ -114,7 +117,7 @@ namespace tridot2d {
 			s << "[" << logLevelName(level) << "] ";
 			char buf[102400];
 			try {
-				int i = vsprintf_s(buf, 102400, fmt, args);
+				int i = vsnprintf(buf, 102400, fmt, args);
 				buf[i] = '\0';
 			}
 			catch (...) {

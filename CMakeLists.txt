@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CXX_STANDARD 20)
 set(SOLUTION_NAME "Tridot2D")
 
+
 #general settings
 if(WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
@@ -45,6 +46,8 @@ set(LIBTYPE "STATIC")
 add_subdirectory(libs/openal)
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} glm glfw opengl32 glew_s imm32 OpenAL)
+elseif(APPLE)
+    target_link_libraries(${PROJECT_NAME} glm glfw glew pthread OpenAL)
 else()
     target_link_libraries(${PROJECT_NAME} glm glfw GL glew pthread stdc++fs OpenAL)
 endif()
