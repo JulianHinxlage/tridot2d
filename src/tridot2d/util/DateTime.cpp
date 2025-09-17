@@ -74,10 +74,11 @@ namespace tridot2d {
 			return mktime(&tm);
 		}
 		else {
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__EMSCRIPTEN__)
 			return 0;
 #else
 			return _mkgmtime(&tm);
+			return 0;
 #endif
 		}
 	}

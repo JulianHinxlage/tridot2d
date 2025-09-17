@@ -248,6 +248,13 @@ namespace tridot2d {
 	}
 
 	int toInt(const std::string& str, int defaultValue) {
+#ifdef __EMSCRIPTEN__
+		if (str.empty()) return defaultValue;
+		char* endptr;
+		long result = std::strtol(str.c_str(), &endptr, 10);
+		if (endptr == str.c_str() || *endptr != '\0') return defaultValue;
+		return static_cast<int>(result);
+#else
 		try {
 			int value = std::stoi(str);
 			return value;
@@ -256,6 +263,7 @@ namespace tridot2d {
 			return defaultValue;
 		}
 		return defaultValue;
+#endif
 	}
 
 	float toFloat(std::string str, float defaultValue, bool allowCommaAsPoint) {

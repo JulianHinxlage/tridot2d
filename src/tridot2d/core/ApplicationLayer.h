@@ -32,8 +32,8 @@ namespace tridot2d {
 
 		SceneLayer();
 		virtual ~SceneLayer();
-		virtual void prepare();
-		virtual void init();
+		virtual void prepare() override;
+		virtual void init() override;
 		virtual void preUpdate() override;
 		virtual void postUpdate() override;
 	};

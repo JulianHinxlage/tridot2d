@@ -7,7 +7,11 @@
 #include <algorithm>
 
 static const char* shaderSource = {
+#if defined(__EMSCRIPTEN__)
+#include "shader/2d_es.glsl"
+#else
 #include "shader/2d.glsl"
+#endif
 };
 
 namespace tridot2d {

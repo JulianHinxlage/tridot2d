@@ -50,20 +50,25 @@ namespace tridot2d {
 			return false;
 		}
 		glfwMakeContextCurrent((GLFWwindow*)context);
+#if !defined(__EMSCRIPTEN__)
 		setVSync(vsync);
+#endif
 
 		Log::info("OpenGL version: %s", glGetString(GL_VERSION));
 		Log::info("GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 		Log::info("GPU vendor: %s", glGetString(GL_VENDOR));
 		Log::info("GPU: %s", glGetString(GL_RENDERER));
 
+#if !defined(__EMSCRIPTEN__)
 		//init glew
 		if (glewInit() != GLEW_OK) {
-			printf("failed to initialize OpenGL\n");
+			Log::error("failed to initialize OpenGL");
 			return false;
 		}
+#endif
 
 		clearColor = { 1, 1, 1 };
+		return true;
 	}
 
 	void Window::update() {

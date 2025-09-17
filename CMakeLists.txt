@@ -2,22 +2,28 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_CXX_STANDARD 20)
 set(SOLUTION_NAME "Tridot2D")
 
-
-#general settings
-if(WIN32)
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-    set(CMAKE_DEBUG_POSTFIX "")
-    set(CMAKE_RELWITHDEBINFO_POSTFIX "")
-    set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
-    set(USE_MSVC_RUNTIME_LIBRARY_DLL 1)
-    #set(CMAKE_WIN32_EXECUTABLE true)
+if(EMSCRIPTEN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WASM=1 -s ALLOW_MEMORY_GROWTH=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREEN_FRAMEBUFFER=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREENCANVAS_SUPPORT=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s LEGACY_GL_EMULATION=0")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    add_link_options(-no-pie)
+    # Original settings for native compilation
+    if(WIN32)
+        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+        set(CMAKE_DEBUG_POSTFIX "")
+        set(CMAKE_RELWITHDEBINFO_POSTFIX "")
+        set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
+        set(USE_MSVC_RUNTIME_LIBRARY_DLL 1)
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+        add_link_options(-no-pie)
+    endif()
 endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_FOLDER Libs)
-
 
 function(assign_source_group)
     foreach(source IN LISTS ${ARGN})
@@ -31,29 +37,76 @@ endfunction(assign_source_group)
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.h)
 assign_source_group(ALL_SOURCES)
 
-
-
 project(tridot2d)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/tridot2d/*.cpp src/tridot2d/*.h)
-file(GLOB IMGUI_SOURCES CONFIGURE_DEPENDS libs/imgui/*.cpp libs/imgui/misc/cpp/imgui_stdlib.cpp libs/imgui/backends/imgui_impl_glfw.cpp libs/imgui/backends/imgui_impl_opengl3.cpp libs/implot/*.cpp)
-add_library(${PROJECT_NAME} SHARED ${SOURCES} ${IMGUI_SOURCES})
-target_include_directories(${PROJECT_NAME} PUBLIC src src/tridot2d)
-add_subdirectory(libs/glm)
-add_subdirectory(libs/glfw)
-add_subdirectory(libs/glew/build/cmake)
-target_compile_definitions(${PROJECT_NAME} PRIVATE AL_LIBTYPE_STATIC)
-set(LIBTYPE "STATIC")
-add_subdirectory(libs/openal)
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME} glm glfw opengl32 glew_s imm32 OpenAL)
-elseif(APPLE)
-    target_link_libraries(${PROJECT_NAME} glm glfw glew pthread OpenAL)
+
+if(EMSCRIPTEN)
+    file(GLOB IMGUI_SOURCES CONFIGURE_DEPENDS 
+        libs/imgui/*.cpp 
+        libs/imgui/misc/cpp/imgui_stdlib.cpp 
+        libs/imgui/backends/imgui_impl_glfw.cpp 
+        libs/imgui/backends/imgui_impl_opengl3.cpp 
+        libs/implot/*.cpp
+    )
+    
+    add_library(${PROJECT_NAME} STATIC ${SOURCES} ${IMGUI_SOURCES})
+    target_include_directories(${PROJECT_NAME} PUBLIC src src/tridot2d)
+    
+    target_include_directories(${PROJECT_NAME} PUBLIC 
+        libs 
+        libs/glm 
+        libs/imgui 
+        libs/imgui/backends 
+        libs/implot 
+        libs/stb
+    )
+    
+    add_subdirectory(libs/glm)
+    target_link_libraries(${PROJECT_NAME} glm)
+    
 else()
-    target_link_libraries(${PROJECT_NAME} glm glfw GL glew pthread stdc++fs OpenAL)
+    file(GLOB IMGUI_SOURCES CONFIGURE_DEPENDS 
+        libs/imgui/*.cpp 
+        libs/imgui/misc/cpp/imgui_stdlib.cpp 
+        libs/imgui/backends/imgui_impl_glfw.cpp 
+        libs/imgui/backends/imgui_impl_opengl3.cpp 
+        libs/implot/*.cpp
+    )
+    
+    add_library(${PROJECT_NAME} SHARED ${SOURCES} ${IMGUI_SOURCES})
+    target_include_directories(${PROJECT_NAME} PUBLIC src src/tridot2d)
+    
+    add_subdirectory(libs/glm)
+    add_subdirectory(libs/glfw)
+    add_subdirectory(libs/glew/build/cmake)
+    
+    target_compile_definitions(${PROJECT_NAME} PRIVATE AL_LIBTYPE_STATIC)
+    set(LIBTYPE "STATIC")
+    add_subdirectory(libs/openal)
+    
+    if(WIN32)
+        target_link_libraries(${PROJECT_NAME} glm glfw opengl32 glew_s imm32 OpenAL)
+    elseif(APPLE)
+        target_link_libraries(${PROJECT_NAME} glm glfw glew pthread OpenAL)
+    else()
+        target_link_libraries(${PROJECT_NAME} glm glfw GL glew pthread stdc++fs OpenAL)
+    endif()
+    
+    target_include_directories(${PROJECT_NAME} PUBLIC 
+        libs 
+        libs/glm 
+        libs/glfw/include 
+        libs/glew/include 
+        libs/imgui 
+        libs/imgui/backends 
+        libs/implot 
+        libs/stb 
+        extern/openal/include
+    )
+    
+    set_target_properties(glfw uninstall update_mappings PROPERTIES FOLDER Libs)
 endif()
-target_include_directories(${PROJECT_NAME} PUBLIC libs libs/glm libs/glfw/include libs/glew/include libs/imgui libs/imgui/backends libs/implot libs/stb extern/openal/include)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ${SOLUTION_NAME})
 
-
-set_target_properties(glfw uninstall update_mappings PROPERTIES FOLDER Libs)
 project(${SOLUTION_NAME})

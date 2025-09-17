@@ -11,9 +11,36 @@
 #include "common/Singleton.h"
 #include "util/strutil.h"
 
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 namespace tridot2d {
 
+#ifdef __EMSCRIPTEN__
+	static Application* g_currentApp = nullptr;
+	static void MainLoopWrapper() {
+	    if (g_currentApp && g_currentApp->window->isOpen()) {
+	        g_currentApp->window->setVSync(2);
+	        g_currentApp->window->update();
+	        g_currentApp->debugUI->beginFrame();
+	        g_currentApp->window->beginFrame();
+	        g_currentApp->update();
+	        g_currentApp->debugUI->endFrame();
+	        g_currentApp->window->endFrame();
+	    } else {
+	        emscripten_cancel_main_loop();
+	    }
+	}
+#endif
+
 	void Application::run() {
+#ifdef __EMSCRIPTEN__
+    	g_currentApp = this;
+    	emscripten_set_main_loop(MainLoopWrapper, 0, 1);
+#else
 		while (window->isOpen()) {
 			window->update();
 			debugUI->beginFrame();
@@ -22,6 +49,7 @@ namespace tridot2d {
 			debugUI->endFrame();
 			window->endFrame();
 		}
+#endif
 	}
 
 	void Application::update() {
